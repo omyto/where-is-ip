@@ -1,13 +1,13 @@
-# ip-geolocation
+# where-is-ip
 
 Look up public IPv4 and IPv6 locations with automatic fallback and no API key.
 
 ## Install
 
-Install [`ip-geolocation`](https://www.npmjs.com/package/ip-geolocation) from npm.
+Install [`where-is-ip`](https://www.npmjs.com/package/where-is-ip) from npm.
 
 ```sh
-npm install ip-geolocation
+npm install where-is-ip
 ```
 
 ## Usage
@@ -17,13 +17,13 @@ The package supports modern browsers and Node.js 18 or later.
 ### npm
 
 ```js
-import { geoip } from "ip-geolocation";
+import { geoip } from "where-is-ip";
 
 const location = await geoip.lookup("8.8.8.8");
 const currentLocation = await geoip.lookup();
 ```
 
-For CommonJS, use `const { geoip } = require("ip-geolocation")`.
+For CommonJS, use `const { geoip } = require("where-is-ip")`.
 
 ### Browser via CDN
 
@@ -31,7 +31,7 @@ Import the ESM bundle from jsDelivr.
 
 ```html
 <script type="module">
-  import { geoip } from "https://cdn.jsdelivr.net/npm/ip-geolocation@latest";
+  import { geoip } from "https://cdn.jsdelivr.net/npm/where-is-ip@latest";
 
   console.log(await geoip.lookup("8.8.8.8"));
 </script>
