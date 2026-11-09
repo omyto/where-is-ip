@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "description": "Look up IP locations with native fetch and automatic fallback between keyless providers.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/omyto/ip-geolocation.git"
+  },
   "type": "module",
   "main": "./dist/index.cjs",
   "jsdelivr": "./dist/index.js",
@@ -32,7 +36,7 @@
     "build": "tsc && node scripts/build.mjs",
     "prepack": "npm run build"
   },
-  "keywords": ["ip-geolocation", "geoip", "ip-lookup", "fetch", "fallback"],
+  "keywords": ["ip-geolocation", "geoip", "ip-lookup", "ip-location", "ipv4", "ipv6"],
   "devDependencies": {
     "esbuild": "0.28.1",
     "typescript": "5.9.3"
