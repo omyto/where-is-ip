@@ -52,24 +52,24 @@ const location = await geoip.lookup("8.8.8.8", { providers: ["geojs", "country-i
 
 For caller IP lookups with a custom order, pass `undefined` as the first argument. For example, `geoip.lookup(undefined, { providers: ["cloudflare"] })` uses Cloudflare Trace to get the caller's IP and country code.
 
-| Provider ID | Specified IP | Caller IP | Browser | In default chain |
-| --- | :---: | :---: | :---: | :---: |
-| `freeipapi` | ✓ | ✓ | ✓ | ✓ |
-| `ipwhois` | ✓ | ✓ | ✓ | ✓ |
-| `geojs` | ✓ | ✓ | ✓ | ✓ |
-| `ip2location` | ✓ | ✓ | — | ✓ |
-| `ip-info` | ✓ | ✓ | ✓ | ✓ |
-| `ipinfo` | ✓ | ✓ | ✓ | ✓ |
-| `dbip` | ✓ | ✓ | — | ✓ |
-| `ipapi-is` | ✓ | ✓ | ✓ | ✓ |
-| `country-is` | ✓ | ✓ | ✓ | ✓ |
-| `countries-dev` | ✓ | ✓ | ✓ | ✓ |
-| `iplocation-net` | ✓ | — | — | ✓ |
-| `cloudflare` | — | ✓ | ✓ | ✓ |
-| `ipsb` | ✓ | ✓ | ✓ | — |
-| `ipapi-co` | ✓ | ✓ | ✓ | — |
-| `ipsnapshot` | ✓ | ✓ | ✓ | — |
-| `ip-api` | ✓ | ✓ | — | — |
+| Provider | ID | Specified IP | Caller IP | Browser | In default chain |
+| --- | --- | :---: | :---: | :---: | :---: |
+| [FreeIPAPI](https://freeipapi.com/) | `freeipapi` | ✓ | ✓ | ✓ | ✓ |
+| [IPWhois](https://ipwhois.io/) | `ipwhois` | ✓ | ✓ | ✓ | ✓ |
+| [GeoJS](https://www.geojs.io/) | `geojs` | ✓ | ✓ | ✓ | ✓ |
+| [IP2Location.io](https://www.ip2location.io/) | `ip2location` | ✓ | ✓ | — | ✓ |
+| [IP Info](https://ip-info.com/) | `ip-info` | ✓ | ✓ | ✓ | ✓ |
+| [IPinfo](https://ipinfo.io/) | `ipinfo` | ✓ | ✓ | ✓ | ✓ |
+| [DB-IP](https://db-ip.com/) | `dbip` | ✓ | ✓ | — | ✓ |
+| [ipapi.is](https://ipapi.is/) | `ipapi-is` | ✓ | ✓ | ✓ | ✓ |
+| [Country.is](https://country.is/) | `country-is` | ✓ | ✓ | ✓ | ✓ |
+| [countries.dev](https://countries.dev/) | `countries-dev` | ✓ | ✓ | ✓ | ✓ |
+| [IPLocation.net](https://www.iplocation.net/) | `iplocation-net` | ✓ | — | — | ✓ |
+| [Cloudflare Trace](https://www.cloudflare.com/) | `cloudflare` | — | ✓ | ✓ | ✓ |
+| [IP.SB](https://ip.sb/) | `ipsb` | ✓ | ✓ | ✓ | — |
+| [ipapi.co](https://ipapi.co/) | `ipapi-co` | ✓ | ✓ | ✓ | — |
+| [IPSnapshot](https://ipsnapshot.com/) | `ipsnapshot` | ✓ | ✓ | ✓ | — |
+| [IP-API.com](https://ip-api.com/) | `ip-api` | ✓ | ✓ | — | — |
 
 **Specified IP** corresponds to `lookup(ip)`, and **Caller IP** corresponds to `lookup()`. The **In default chain** column shows which providers are tried when `providers` is omitted. The library tries them in table order and skips any that do not support the current runtime or lookup mode. A dash in that column means the provider requires explicit selection.
 
