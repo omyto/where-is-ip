@@ -1,6 +1,9 @@
 import type { GeoIpResult } from "../index.js";
 
-type ProviderResult = Omit<GeoIpResult, "ip" | "provider"> & { ip: string | null };
+type ProviderResult = Omit<GeoIpResult, "ip" | "countryCode" | "provider"> & {
+  ip: string | null;
+  countryCode: string | null;
+};
 
 export interface Provider {
   name: string;

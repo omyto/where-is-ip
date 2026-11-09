@@ -11,11 +11,12 @@ export async function lookup(ip?: string): Promise<GeoIpResult> {
       const attempt = address === undefined ? provider.lookupSelf?.() : provider.lookup?.(address);
       if (!attempt) continue;
 
-      const { ip: detectedIp, ...location } = await attempt;
-      if (!location.countryCode && !location.countryName) {
-        throw new Error("Response did not include a country");
+      const { ip: detectedIp, countryCode, ...location } = await attempt;
+      if (!countryCode) {
+        errors.push(new Error(`${provider.name} response did not include a country code`));
+        continue;
       }
-      return { ip: address ?? normalizeIp(detectedIp), ...location, provider: provider.name };
+      return { ip: address ?? normalizeIp(detectedIp), countryCode, ...location, provider: provider.name };
     } catch (cause) {
       errors.push(new Error(`${provider.name} lookup failed`, { cause }));
     }

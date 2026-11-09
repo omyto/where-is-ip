@@ -2,7 +2,7 @@ import { lookup } from "./lookup.js";
 
 export interface GeoIpResult {
   ip: string;
-  countryCode: string | null;
+  countryCode: string;
   countryName: string | null;
   region: string | null;
   city: string | null;

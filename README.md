@@ -49,7 +49,7 @@ Import the ESM bundle from jsDelivr.
 ```ts
 export interface GeoIpResult {
   ip: string;
-  countryCode: string | null;
+  countryCode: string;
   countryName: string | null;
   region: string | null;
   city: string | null;
@@ -71,6 +71,5 @@ Providers are tried in table order with a 2-second timeout per attempt.
 | [IP2Location.io](https://www.ip2location.io/) | `ip2location` | ✓ | ✓ | — |
 | [IP Info](https://ip-info.com/) | `ip-info` | ✓ | ✓ | ✓ |
 | [IPinfo](https://ipinfo.io/) | `ipinfo` | ✓ | ✓ | ✓ |
-| [ipapi.is](https://ipapi.is/) | `ipapi-is` | ✓ | ✓ | ✓ |
 | [Country.is](https://country.is/) | `country-is` | ✓ | ✓ | ✓ |
 | [Cloudflare Trace](https://www.cloudflare.com/) | `cloudflare` | — | ✓ | ✓ |
