@@ -30,7 +30,7 @@ async function lookupFromProviders(ip: string | undefined, providers: readonly P
 
   for (const provider of providers) {
     try {
-      const attempt = ip === undefined ? provider.lookupSelf?.() : provider.lookup(ip);
+      const attempt = ip === undefined ? provider.lookupSelf?.() : provider.lookup?.(ip);
       if (!attempt) continue;
 
       const { ip: detectedIp, ...location } = await attempt;
@@ -44,7 +44,8 @@ async function lookupFromProviders(ip: string | undefined, providers: readonly P
   }
 
   if (errors.length === 0) {
-    throw new TypeError("No selected geolocation provider supports caller IP lookup");
+    const mode = ip === undefined ? "caller IP lookup" : "explicit IP lookup";
+    throw new TypeError(`No selected geolocation provider supports ${mode}`);
   }
   throw new AggregateError(errors, `IP geolocation failed for ${ip ?? "the caller"}`);
 }

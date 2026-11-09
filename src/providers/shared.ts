@@ -5,7 +5,7 @@ type ProviderResult = Omit<GeoIpResult, "ip" | "provider"> & { ip: string | null
 export interface Provider {
   name: string;
   serverOnly?: boolean;
-  lookup(ip: string): Promise<ProviderResult>;
+  lookup?(ip: string): Promise<ProviderResult>;
   lookupSelf?(): Promise<ProviderResult>;
 }
 
@@ -16,6 +16,16 @@ export function withSelfLookup(provider: Omit<Provider, "lookup" | "lookupSelf">
 }
 
 export async function fetchJson(url: string, init?: RequestInit): Promise<Record<string, unknown>> {
+  const data = readObject(await fetchBody(url, response => response.json(), init));
+  if (!data) throw new Error("Expected a JSON object");
+  return data;
+}
+
+export function fetchText(url: string): Promise<string> {
+  return fetchBody(url, response => response.text());
+}
+
+async function fetchBody<T>(url: string, read: (response: Response) => Promise<T>, init?: RequestInit): Promise<T> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 3000);
 
@@ -23,9 +33,7 @@ export async function fetchJson(url: string, init?: RequestInit): Promise<Record
     const response = await fetch(url, { ...init, signal: controller.signal });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-    const data = readObject(await response.json());
-    if (!data) throw new Error("Expected a JSON object");
-    return data;
+    return await read(response);
   } finally {
     clearTimeout(timeout);
   }
