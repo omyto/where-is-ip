@@ -1,6 +1,5 @@
 import { cloudflare } from "./cloudflare.js";
 import { countryIs } from "./country-is.js";
-import { dbip } from "./dbip.js";
 import { freeipapi } from "./freeipapi.js";
 import { geojs } from "./geojs.js";
 import { ipApi } from "./ip-api.js";
@@ -14,7 +13,7 @@ import { ipwhois } from "./ipwhois.js";
 import type { Provider } from "./shared.js";
 
 const defaultProviders = [
-  freeipapi, ipwhois, geojs, ip2location, ipInfo, ipinfo, dbip, ipapiIs,
+  freeipapi, ipwhois, geojs, ip2location, ipInfo, ipinfo, ipapiIs,
   countryIs, cloudflare,
 ];
 const providers = [...defaultProviders, ipsb, ipsnapshot, ipApi];

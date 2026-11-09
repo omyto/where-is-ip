@@ -61,7 +61,6 @@ For caller IP lookups with a custom order, pass `undefined` as the first argumen
 | [IP2Location.io](https://www.ip2location.io/) | `ip2location` | ✓ | ✓ | — | ✓ |
 | [IP Info](https://ip-info.com/) | `ip-info` | ✓ | ✓ | ✓ | ✓ |
 | [IPinfo](https://ipinfo.io/) | `ipinfo` | ✓ | ✓ | ✓ | ✓ |
-| [DB-IP](https://db-ip.com/) | `dbip` | ✓ | ✓ | — | ✓ |
 | [ipapi.is](https://ipapi.is/) | `ipapi-is` | ✓ | ✓ | ✓ | ✓ |
 | [Country.is](https://country.is/) | `country-is` | ✓ | ✓ | ✓ | ✓ |
 | [Cloudflare Trace](https://www.cloudflare.com/) | `cloudflare` | — | ✓ | ✓ | ✓ |
