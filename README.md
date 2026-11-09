@@ -14,6 +14,8 @@ npm install ip-geolocation
 
 The package supports modern browsers and Node.js 18 or later.
 
+### npm
+
 ```js
 import { geoip } from "ip-geolocation";
 
@@ -22,6 +24,20 @@ const currentLocation = await geoip.lookup();
 ```
 
 For CommonJS, use `const { geoip } = require("ip-geolocation")`.
+
+### Browser via CDN
+
+Import the ESM bundle from jsDelivr.
+
+```html
+<script type="module">
+  import { geoip } from "https://cdn.jsdelivr.net/npm/ip-geolocation@latest";
+
+  console.log(await geoip.lookup("8.8.8.8"));
+</script>
+```
+
+### Methods
 
 | Method | Looks up |
 | --- | --- |
@@ -41,18 +57,6 @@ export interface GeoIpResult {
   longitude: number | null;
   provider: string;
 }
-```
-
-## Browser via CDN
-
-Import the ESM bundle from jsDelivr.
-
-```html
-<script type="module">
-  import { geoip } from "https://cdn.jsdelivr.net/npm/ip-geolocation@latest";
-
-  console.log(await geoip.lookup("8.8.8.8"));
-</script>
 ```
 
 ## Providers
