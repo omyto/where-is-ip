@@ -27,7 +27,7 @@ export function fetchText(url: string): Promise<string> {
 
 async function fetchBody<T>(url: string, read: (response: Response) => Promise<T>, init?: RequestInit): Promise<T> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 3000);
+  const timeout = setTimeout(() => controller.abort(), 2000);
 
   try {
     const response = await fetch(url, { ...init, signal: controller.signal });

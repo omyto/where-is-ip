@@ -45,7 +45,7 @@ Use a specific version instead of `@latest` if you want the page to load the sam
 
 ## Providers
 
-The library tries providers in table order and skips any that do not support the current runtime or lookup mode. **Specified IP** corresponds to `lookup(ip)`, and **Caller IP** corresponds to `lookup()`.
+The library tries providers in table order and skips any that do not support the current runtime or lookup mode. Each attempt has a 2-second timeout. **Specified IP** corresponds to `lookup(ip)`, and **Caller IP** corresponds to `lookup()`.
 
 | Provider | ID | Specified IP | Caller IP | Browser |
 | --- | --- | :---: | :---: | :---: |
