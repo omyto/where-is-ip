@@ -8,7 +8,6 @@ import { ip2location } from "./ip2location.js";
 import { ipapiIs } from "./ipapi-is.js";
 import { ipinfo } from "./ipinfo.js";
 import { ipsb } from "./ipsb.js";
-import { ipsnapshot } from "./ipsnapshot.js";
 import { ipwhois } from "./ipwhois.js";
 import type { Provider } from "./shared.js";
 
@@ -16,7 +15,7 @@ const defaultProviders = [
   freeipapi, ipwhois, geojs, ip2location, ipInfo, ipinfo, ipapiIs,
   countryIs, cloudflare,
 ];
-const providers = [...defaultProviders, ipsb, ipsnapshot, ipApi];
+const providers = [...defaultProviders, ipsb, ipApi];
 
 export function getProviders(names?: readonly string[]): Provider[] {
   const selected = names?.map(name => {

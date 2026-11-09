@@ -65,14 +65,13 @@ For caller IP lookups with a custom order, pass `undefined` as the first argumen
 | [Country.is](https://country.is/) | `country-is` | ✓ | ✓ | ✓ | ✓ |
 | [Cloudflare Trace](https://www.cloudflare.com/) | `cloudflare` | — | ✓ | ✓ | ✓ |
 | [IP.SB](https://ip.sb/) | `ipsb` | ✓ | ✓ | ✓ | — |
-| [IPSnapshot](https://ipsnapshot.com/) | `ipsnapshot` | ✓ | ✓ | ✓ | — |
 | [IP-API.com](https://ip-api.com/) | `ip-api` | ✓ | ✓ | — | — |
 
 **Specified IP** corresponds to `lookup(ip)`, and **Caller IP** corresponds to `lookup()`. The **In default chain** column shows which providers are tried when `providers` is omitted. The library tries them in table order and skips any that do not support the current runtime or lookup mode. A dash in that column means the provider requires explicit selection.
 
 `cloudflare` returns country-level results.
 
-The opt-in providers have restrictions on their free tiers. [IP.SB](https://ip.sb/pricing/) and [IPSnapshot](https://ipsnapshot.com/ip-lookup-api) allow personal use and evaluation. [IP-API.com](https://ip-api.com/docs/legal) uses plain HTTP and allows non-commercial use only on its free tier.
+The opt-in providers have restrictions on their free tiers. [IP.SB](https://ip.sb/pricing/) allows personal use and evaluation. [IP-API.com](https://ip-api.com/docs/legal) uses plain HTTP and allows non-commercial use only on its free tier.
 
 ## Build locally
 
