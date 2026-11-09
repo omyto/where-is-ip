@@ -1,28 +1,30 @@
-import type { GeoIpResult } from "./index.js";
-import { providers } from "./providers/index.js";
+import type { GeoIpResult, LookupOptions } from "./index.js";
+import { getProviders } from "./providers/index.js";
+import type { Provider } from "./providers/shared.js";
 
 const batchConcurrency = 4;
 
-export async function lookup(ip: string): Promise<GeoIpResult> {
-  return lookupFromProviders(normalizeIp(ip));
+export async function lookup(ip: string, options?: LookupOptions): Promise<GeoIpResult> {
+  return lookupFromProviders(normalizeIp(ip), getProviders(options?.providers));
 }
 
-export async function lookupMany(ips: readonly string[]): Promise<GeoIpResult[]> {
+export async function lookupMany(ips: readonly string[], options?: LookupOptions): Promise<GeoIpResult[]> {
   if (!Array.isArray(ips)) throw new TypeError("Expected an array of IP addresses");
 
   const addresses = Array.from(ips, normalizeIp);
+  const providers = getProviders(options?.providers);
   const results: GeoIpResult[] = [];
 
   for (let offset = 0; offset < addresses.length; offset += batchConcurrency) {
     const batch = addresses.slice(offset, offset + batchConcurrency);
-    const locations = await Promise.all(batch.map(lookupFromProviders));
+    const locations = await Promise.all(batch.map(ip => lookupFromProviders(ip, providers)));
     results.push(...locations);
   }
 
   return results;
 }
 
-async function lookupFromProviders(ip: string): Promise<GeoIpResult> {
+async function lookupFromProviders(ip: string, providers: readonly Provider[]): Promise<GeoIpResult> {
   const errors: Error[] = [];
 
   for (const provider of providers) {

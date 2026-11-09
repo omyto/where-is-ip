@@ -12,7 +12,11 @@ export interface GeoIpResult {
   provider: string;
 }
 
+export interface LookupOptions {
+  providers?: readonly string[];
+}
+
 export const geoip: {
-  lookup(ip: string): Promise<GeoIpResult>;
-  lookupMany(ips: readonly string[]): Promise<GeoIpResult[]>;
+  lookup(ip: string, options?: LookupOptions): Promise<GeoIpResult>;
+  lookupMany(ips: readonly string[], options?: LookupOptions): Promise<GeoIpResult[]>;
 } = { lookup, lookupMany };

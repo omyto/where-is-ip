@@ -39,6 +39,23 @@ Use `ip-geolocation` directly in an HTML page served over HTTP or HTTPS. Import 
 
 Use a specific version instead of `@latest` if you want the page to load the same release every time. The browser sends lookups directly to each provider, so CORS and provider rate limits apply.
 
+## Providers
+
+Both lookup methods accept an optional `providers` array to set the fallback order for that call.
+
+```js
+const location = await geoip.lookup("8.8.8.8", { providers: ["geojs", "country-is"] });
+```
+
+| Availability | Provider IDs |
+| --- | --- |
+| Default, browser and server | `freeipapi`, `ipwhois`, `geojs`, `ip-info`, `ipinfo`, `ipapi-is`, `country-is`, `countries-dev` |
+| Default, server only | `ip2location`, `dbip`, `iplocation-net` |
+| Explicit selection, personal use or evaluation depending on the provider | `ipsb`, `ipapi-co`, `ipsnapshot` |
+| Explicit selection, server only, plain HTTP and non-commercial use | `ip-api` |
+
+`countries-dev` and `iplocation-net` return country-level results. Check the free-tier terms for [IP.SB](https://ip.sb/pricing/), [ipapi.co](https://ipapi.co/), [IPSnapshot](https://ipsnapshot.com/ip-lookup-api), and [IP-API.com](https://ip-api.com/docs/legal) before selecting them.
+
 ## Build locally
 
 ```sh
