@@ -1,4 +1,4 @@
-import { lookup, lookupMany } from "./lookup.js";
+import { lookup } from "./lookup.js";
 
 export interface GeoIpResult {
   ip: string;
@@ -18,5 +18,4 @@ export interface LookupOptions {
 
 export const geoip: {
   lookup(ip?: string, options?: LookupOptions): Promise<GeoIpResult>;
-  lookupMany(ips: readonly string[], options?: LookupOptions): Promise<GeoIpResult[]>;
-} = { lookup, lookupMany };
+} = { lookup };

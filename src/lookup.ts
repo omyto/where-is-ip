@@ -1,53 +1,31 @@
 import type { GeoIpResult, LookupOptions } from "./index.js";
 import { getProviders } from "./providers/index.js";
-import type { Provider } from "./providers/shared.js";
-
-const batchConcurrency = 4;
 
 export async function lookup(ip?: string, options?: LookupOptions): Promise<GeoIpResult> {
   const address = ip === undefined ? undefined : normalizeIp(ip);
-  return lookupFromProviders(address, getProviders(options?.providers));
-}
-
-export async function lookupMany(ips: readonly string[], options?: LookupOptions): Promise<GeoIpResult[]> {
-  if (!Array.isArray(ips)) throw new TypeError("Expected an array of IP addresses");
-
-  const addresses = Array.from(ips, normalizeIp);
   const providers = getProviders(options?.providers);
-  const results: GeoIpResult[] = [];
-
-  for (let offset = 0; offset < addresses.length; offset += batchConcurrency) {
-    const batch = addresses.slice(offset, offset + batchConcurrency);
-    const locations = await Promise.all(batch.map(ip => lookupFromProviders(ip, providers)));
-    results.push(...locations);
-  }
-
-  return results;
-}
-
-async function lookupFromProviders(ip: string | undefined, providers: readonly Provider[]): Promise<GeoIpResult> {
   const errors: Error[] = [];
 
   for (const provider of providers) {
     try {
-      const attempt = ip === undefined ? provider.lookupSelf?.() : provider.lookup?.(ip);
+      const attempt = address === undefined ? provider.lookupSelf?.() : provider.lookup?.(address);
       if (!attempt) continue;
 
       const { ip: detectedIp, ...location } = await attempt;
       if (!location.countryCode && !location.countryName) {
         throw new Error("Response did not include a country");
       }
-      return { ip: ip ?? normalizeIp(detectedIp), ...location, provider: provider.name };
+      return { ip: address ?? normalizeIp(detectedIp), ...location, provider: provider.name };
     } catch (cause) {
       errors.push(new Error(`${provider.name} lookup failed`, { cause }));
     }
   }
 
   if (errors.length === 0) {
-    const mode = ip === undefined ? "caller IP lookup" : "explicit IP lookup";
+    const mode = address === undefined ? "caller IP lookup" : "explicit IP lookup";
     throw new TypeError(`No selected geolocation provider supports ${mode}`);
   }
-  throw new AggregateError(errors, `IP geolocation failed for ${ip ?? "the caller"}`);
+  throw new AggregateError(errors, `IP geolocation failed for ${address ?? "the caller"}`);
 }
 
 function normalizeIp(input: unknown): string {

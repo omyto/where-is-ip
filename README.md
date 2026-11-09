@@ -19,14 +19,13 @@ import { geoip } from "ip-geolocation";
 
 const location = await geoip.lookup("8.8.8.8");
 const currentLocation = await geoip.lookup();
-const locations = await geoip.lookupMany(["8.8.8.8", "1.1.1.1"]);
 ```
 
 For CommonJS, use `const { geoip } = require("ip-geolocation")`.
 
 With no IP argument, `lookup()` uses the caller's public IP. Call it in the browser to locate the visitor's connection, or on the server to locate the server's outgoing connection.
 
-Both methods return the same location fields for each IP. The result includes `ip`, `countryCode`, `countryName`, `region`, `city`, `latitude`, `longitude`, `timezone`, and `provider`. Missing location fields are `null`. `lookupMany` preserves input order and rejects if any IP cannot be looked up.
+The result includes `ip`, `countryCode`, `countryName`, `region`, `city`, `latitude`, `longitude`, `timezone`, and `provider`. Missing location fields are `null`.
 
 ## Browser via CDN
 
@@ -44,7 +43,7 @@ Use a specific version instead of `@latest` if you want the page to load the sam
 
 ## Providers
 
-Both lookup methods accept an optional `providers` array to set the fallback order for that call.
+`lookup()` accepts an optional `providers` array to set the fallback order for that call.
 
 ```js
 const location = await geoip.lookup("8.8.8.8", { providers: ["geojs", "country-is"] });
