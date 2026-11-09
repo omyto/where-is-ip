@@ -52,7 +52,7 @@ const location = await geoip.lookup("8.8.8.8", { providers: ["geojs", "country-i
 
 For caller IP lookups with a custom order, pass `undefined` as the first argument. For example, `geoip.lookup(undefined, { providers: ["cloudflare"] })` uses Cloudflare Trace to get the caller's IP and country code.
 
-| Provider ID | `lookup(ip)` | `lookup()` | Browser | Default |
+| Provider ID | Specified IP | Caller IP | Browser | In default chain |
 | --- | :---: | :---: | :---: | :---: |
 | `freeipapi` | ✓ | ✓ | ✓ | ✓ |
 | `ipwhois` | ✓ | ✓ | ✓ | ✓ |
@@ -71,9 +71,11 @@ For caller IP lookups with a custom order, pass `undefined` as the first argumen
 | `ipsnapshot` | ✓ | ✓ | ✓ | — |
 | `ip-api` | ✓ | ✓ | — | — |
 
-All providers can run on the server for their supported lookup modes. The default providers are tried in the order shown. A dash in **Default** means you must select that provider explicitly.
+**Specified IP** corresponds to `lookup(ip)`, and **Caller IP** corresponds to `lookup()`. The **In default chain** column shows which providers are tried when `providers` is omitted. The library tries them in table order and skips any that do not support the current runtime or lookup mode. A dash in that column means the provider requires explicit selection.
 
-`countries-dev`, `iplocation-net`, and `cloudflare` return country-level results. The free tiers of [IP.SB](https://ip.sb/pricing/), [ipapi.co](https://ipapi.co/), and [IPSnapshot](https://ipsnapshot.com/ip-lookup-api) have personal-use or evaluation limits. [IP-API.com](https://ip-api.com/docs/legal) uses plain HTTP and allows non-commercial use only on its free tier.
+`countries-dev`, `iplocation-net`, and `cloudflare` return country-level results.
+
+The four opt-in providers have restrictions on their free tiers. [IP.SB](https://ip.sb/pricing/) and [IPSnapshot](https://ipsnapshot.com/ip-lookup-api) allow personal use and evaluation, and [ipapi.co](https://ipapi.co/) offers its free endpoint for testing and evaluation. [IP-API.com](https://ip-api.com/docs/legal) uses plain HTTP and allows non-commercial use only on its free tier.
 
 ## Build locally
 
