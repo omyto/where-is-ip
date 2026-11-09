@@ -52,15 +52,28 @@ const location = await geoip.lookup("8.8.8.8", { providers: ["geojs", "country-i
 
 For caller IP lookups with a custom order, pass `undefined` as the first argument. For example, `geoip.lookup(undefined, { providers: ["cloudflare"] })` uses Cloudflare Trace to get the caller's IP and country code.
 
-| Availability | Provider IDs |
-| --- | --- |
-| Default, browser and server | `freeipapi`, `ipwhois`, `geojs`, `ip-info`, `ipinfo`, `ipapi-is`, `country-is`, `countries-dev` |
-| Default, browser and server, caller IP only | `cloudflare` |
-| Default, server only | `ip2location`, `dbip`, `iplocation-net` |
-| Explicit selection, personal use or evaluation depending on the provider | `ipsb`, `ipapi-co`, `ipsnapshot` |
-| Explicit selection, server only, plain HTTP and non-commercial use | `ip-api` |
+| Provider ID | `lookup(ip)` | `lookup()` | Browser | Default |
+| --- | :---: | :---: | :---: | :---: |
+| `freeipapi` | ✓ | ✓ | ✓ | ✓ |
+| `ipwhois` | ✓ | ✓ | ✓ | ✓ |
+| `geojs` | ✓ | ✓ | ✓ | ✓ |
+| `ip2location` | ✓ | ✓ | — | ✓ |
+| `ip-info` | ✓ | ✓ | ✓ | ✓ |
+| `ipinfo` | ✓ | ✓ | ✓ | ✓ |
+| `dbip` | ✓ | ✓ | — | ✓ |
+| `ipapi-is` | ✓ | ✓ | ✓ | ✓ |
+| `country-is` | ✓ | ✓ | ✓ | ✓ |
+| `countries-dev` | ✓ | ✓ | ✓ | ✓ |
+| `iplocation-net` | ✓ | — | — | ✓ |
+| `cloudflare` | — | ✓ | ✓ | ✓ |
+| `ipsb` | ✓ | ✓ | ✓ | — |
+| `ipapi-co` | ✓ | ✓ | ✓ | — |
+| `ipsnapshot` | ✓ | ✓ | ✓ | — |
+| `ip-api` | ✓ | ✓ | — | — |
 
-`countries-dev` and `iplocation-net` return country-level results. Check the free-tier terms for [IP.SB](https://ip.sb/pricing/), [ipapi.co](https://ipapi.co/), [IPSnapshot](https://ipsnapshot.com/ip-lookup-api), and [IP-API.com](https://ip-api.com/docs/legal) before selecting them.
+All providers can run on the server for their supported lookup modes. The default providers are tried in the order shown. A dash in **Default** means you must select that provider explicitly.
+
+`countries-dev`, `iplocation-net`, and `cloudflare` return country-level results. The free tiers of [IP.SB](https://ip.sb/pricing/), [ipapi.co](https://ipapi.co/), and [IPSnapshot](https://ipsnapshot.com/ip-lookup-api) have personal-use or evaluation limits. [IP-API.com](https://ip-api.com/docs/legal) uses plain HTTP and allows non-commercial use only on its free tier.
 
 ## Build locally
 
