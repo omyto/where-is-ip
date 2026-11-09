@@ -23,15 +23,29 @@ const currentLocation = await geoip.lookup();
 
 For CommonJS, use `const { geoip } = require("ip-geolocation")`.
 
-With no IP argument, `lookup()` uses the caller's public IP. Call it in the browser to locate the visitor's connection, or on the server to locate the server's outgoing connection.
+| Method | Looks up |
+| --- | --- |
+| `geoip.lookup(ip)` | The specified public IPv4 or IPv6 address. |
+| `geoip.lookup()` | The visitor's public IP in a browser or the server's outgoing IP in Node.js. |
 
-The result includes `ip`, `countryCode`, `countryName`, `region`, `city`, `latitude`, `longitude`, and `provider`. Missing location fields are `null`.
+### Result
 
-`lookup()` rejects if the input is invalid or no provider can return a location.
+```ts
+export interface GeoIpResult {
+  ip: string;
+  countryCode: string | null;
+  countryName: string | null;
+  region: string | null;
+  city: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  provider: string;
+}
+```
 
 ## Browser via CDN
 
-Use `ip-geolocation` directly in an HTML page served over HTTP or HTTPS. Import the ESM bundle from jsDelivr without installing the package locally.
+Import the ESM bundle from jsDelivr.
 
 ```html
 <script type="module">
@@ -41,11 +55,9 @@ Use `ip-geolocation` directly in an HTML page served over HTTP or HTTPS. Import 
 </script>
 ```
 
-Use a specific version instead of `@latest` if you want the page to load the same release every time. The browser sends lookups directly to each provider, so CORS and provider rate limits apply.
-
 ## Providers
 
-The library tries providers in table order and skips any that do not support the current runtime or lookup mode. Each attempt has a 2-second timeout. **Specified IP** corresponds to `lookup(ip)`, and **Caller IP** corresponds to `lookup()`.
+Providers are tried in table order with a 2-second timeout per attempt.
 
 | Provider | ID | Specified IP | Caller IP | Browser |
 | --- | --- | :---: | :---: | :---: |
@@ -58,18 +70,3 @@ The library tries providers in table order and skips any that do not support the
 | [ipapi.is](https://ipapi.is/) | `ipapi-is` | ✓ | ✓ | ✓ |
 | [Country.is](https://country.is/) | `country-is` | ✓ | ✓ | ✓ |
 | [Cloudflare Trace](https://www.cloudflare.com/) | `cloudflare` | — | ✓ | ✓ |
-
-`cloudflare` returns country-level results.
-
-## Build locally
-
-```sh
-npm install
-npm run build
-```
-
-The build creates `dist/index.js`, `dist/index.cjs`, and their TypeScript declarations. To try the browser build locally, serve the project over HTTP and use `./dist/index.js` as the import URL.
-
-## License
-
-[MIT](LICENSE)
