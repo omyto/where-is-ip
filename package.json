@@ -1,0 +1,39 @@
+{
+  "name": "ip-geolocation",
+  "version": "0.1.0",
+  "description": "Look up IP locations with native fetch and automatic fallback between keyless providers.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "jsdelivr": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist/index.js",
+    "dist/index.cjs",
+    "dist/index.d.ts",
+    "dist/index.d.cts"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc && node scripts/build.mjs",
+    "prepack": "npm run build"
+  },
+  "keywords": ["ip-geolocation", "geoip", "ip-lookup", "fetch", "fallback"],
+  "devDependencies": {
+    "esbuild": "0.28.1",
+    "typescript": "5.9.3"
+  }
+}
