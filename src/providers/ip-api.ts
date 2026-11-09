@@ -4,7 +4,7 @@ export const ipApi = withSelfLookup({
   name: "ip-api",
   serverOnly: true,
   async lookup(ip) {
-    const data = await fetchJson(`http://ip-api.com/json/${ip ?? ""}?fields=status,message,query,country,countryCode,regionName,city,lat,lon,timezone`);
+    const data = await fetchJson(`http://ip-api.com/json/${ip ?? ""}?fields=status,message,query,country,countryCode,regionName,city,lat,lon`);
     if (data.status !== "success") throw new Error(readText(data.message) ?? "Lookup was unsuccessful");
     return normalizeLocation({
       ip: data.query,
@@ -14,7 +14,6 @@ export const ipApi = withSelfLookup({
       city: data.city,
       latitude: data.lat,
       longitude: data.lon,
-      timezone: data.timezone,
     });
   },
 });

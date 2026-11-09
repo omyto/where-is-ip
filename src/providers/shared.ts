@@ -48,7 +48,6 @@ export function normalizeLocation(fields: Partial<Record<keyof ProviderResult, u
     city: readText(fields.city),
     latitude: readCoordinate(fields.latitude, 90),
     longitude: readCoordinate(fields.longitude, 180),
-    timezone: readText(fields.timezone),
   };
 }
 

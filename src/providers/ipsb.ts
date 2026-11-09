@@ -13,7 +13,6 @@ export const ipsb = withSelfLookup({
       city: data.city,
       latitude: data.latitude,
       longitude: data.longitude,
-      timezone: data.timezone,
     });
   },
 });

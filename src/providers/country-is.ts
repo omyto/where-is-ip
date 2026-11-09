@@ -11,7 +11,6 @@ export const countryIs = withSelfLookup({
       city: data.city,
       latitude: location?.latitude,
       longitude: location?.longitude,
-      timezone: location?.time_zone,
     });
   },
 });

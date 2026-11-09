@@ -1,4 +1,4 @@
-import { fetchJson, normalizeLocation, readObject, readText, withSelfLookup } from "./shared.js";
+import { fetchJson, normalizeLocation, readText, withSelfLookup } from "./shared.js";
 
 export const ipwhois = withSelfLookup({
   name: "ipwhois",
@@ -14,7 +14,6 @@ export const ipwhois = withSelfLookup({
       city: data.city,
       latitude: data.latitude,
       longitude: data.longitude,
-      timezone: readObject(data.timezone)?.id,
     });
   },
 });

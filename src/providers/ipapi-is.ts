@@ -13,7 +13,6 @@ export const ipapiIs = withSelfLookup({
       city: data.city,
       latitude: data.lat,
       longitude: data.lon,
-      timezone: data.timezone,
     });
   },
 });

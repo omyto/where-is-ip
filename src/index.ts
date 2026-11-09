@@ -8,7 +8,6 @@ export interface GeoIpResult {
   city: string | null;
   latitude: number | null;
   longitude: number | null;
-  timezone: string | null;
   provider: string;
 }
 

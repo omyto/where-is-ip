@@ -12,7 +12,6 @@ export const ipinfo = withSelfLookup({
       city: data.city,
       latitude,
       longitude,
-      timezone: data.timezone,
     });
   },
 });

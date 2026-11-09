@@ -25,7 +25,7 @@ For CommonJS, use `const { geoip } = require("ip-geolocation")`.
 
 With no IP argument, `lookup()` uses the caller's public IP. Call it in the browser to locate the visitor's connection, or on the server to locate the server's outgoing connection.
 
-The result includes `ip`, `countryCode`, `countryName`, `region`, `city`, `latitude`, `longitude`, `timezone`, and `provider`. Missing location fields are `null`.
+The result includes `ip`, `countryCode`, `countryName`, `region`, `city`, `latitude`, `longitude`, and `provider`. Missing location fields are `null`.
 
 `lookup()` rejects if the input is invalid or no selected provider can return a location.
 
