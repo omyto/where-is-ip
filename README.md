@@ -68,7 +68,6 @@ For caller IP lookups with a custom order, pass `undefined` as the first argumen
 | [IPLocation.net](https://www.iplocation.net/) | `iplocation-net` | ✓ | — | — | ✓ |
 | [Cloudflare Trace](https://www.cloudflare.com/) | `cloudflare` | — | ✓ | ✓ | ✓ |
 | [IP.SB](https://ip.sb/) | `ipsb` | ✓ | ✓ | ✓ | — |
-| [ipapi.co](https://ipapi.co/) | `ipapi-co` | ✓ | ✓ | ✓ | — |
 | [IPSnapshot](https://ipsnapshot.com/) | `ipsnapshot` | ✓ | ✓ | ✓ | — |
 | [IP-API.com](https://ip-api.com/) | `ip-api` | ✓ | ✓ | — | — |
 
@@ -76,7 +75,7 @@ For caller IP lookups with a custom order, pass `undefined` as the first argumen
 
 `countries-dev`, `iplocation-net`, and `cloudflare` return country-level results.
 
-The four opt-in providers have restrictions on their free tiers. [IP.SB](https://ip.sb/pricing/) and [IPSnapshot](https://ipsnapshot.com/ip-lookup-api) allow personal use and evaluation, and [ipapi.co](https://ipapi.co/) offers its free endpoint for testing and evaluation. [IP-API.com](https://ip-api.com/docs/legal) uses plain HTTP and allows non-commercial use only on its free tier.
+The opt-in providers have restrictions on their free tiers. [IP.SB](https://ip.sb/pricing/) and [IPSnapshot](https://ipsnapshot.com/ip-lookup-api) allow personal use and evaluation. [IP-API.com](https://ip-api.com/docs/legal) uses plain HTTP and allows non-commercial use only on its free tier.
 
 ## Build locally
 

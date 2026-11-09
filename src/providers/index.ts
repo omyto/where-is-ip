@@ -7,7 +7,6 @@ import { geojs } from "./geojs.js";
 import { ipApi } from "./ip-api.js";
 import { ipInfo } from "./ip-info.js";
 import { ip2location } from "./ip2location.js";
-import { ipapiCo } from "./ipapi-co.js";
 import { ipapiIs } from "./ipapi-is.js";
 import { ipinfo } from "./ipinfo.js";
 import { iplocationNet } from "./iplocation-net.js";
@@ -20,7 +19,7 @@ const defaultProviders = [
   freeipapi, ipwhois, geojs, ip2location, ipInfo, ipinfo, dbip, ipapiIs,
   countryIs, countriesDev, iplocationNet, cloudflare,
 ];
-const providers = [...defaultProviders, ipsb, ipapiCo, ipsnapshot, ipApi];
+const providers = [...defaultProviders, ipsb, ipsnapshot, ipApi];
 
 export function getProviders(names?: readonly string[]): Provider[] {
   const selected = names?.map(name => {
