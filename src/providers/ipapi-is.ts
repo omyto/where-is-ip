@@ -1,12 +1,13 @@
-import { fetchJson, normalizeLocation } from "./shared.js";
-import type { Provider } from "./shared.js";
+import { fetchJson, normalizeLocation, withSelfLookup } from "./shared.js";
 
-export const ipapiIs: Provider = {
+export const ipapiIs = withSelfLookup({
   name: "ipapi-is",
   async lookup(ip) {
-    const data = await fetchJson(`https://api.ipapi.is/?q=${encodeURIComponent(ip)}`);
+    const url = ip ? `https://api.ipapi.is/?q=${encodeURIComponent(ip)}` : "https://api.ipapi.is/";
+    const data = await fetchJson(url);
     if (data.is_bogon === true) throw new Error("IP address is not publicly routable");
     return normalizeLocation({
+      ip: data.ip,
       countryName: data.country,
       region: data.region,
       city: data.city,
@@ -15,4 +16,4 @@ export const ipapiIs: Provider = {
       timezone: data.timezone,
     });
   },
-};
+});

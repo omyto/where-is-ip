@@ -1,11 +1,18 @@
 import type { GeoIpResult } from "../index.js";
 
-type Location = Omit<GeoIpResult, "ip" | "provider">;
+type ProviderResult = Omit<GeoIpResult, "ip" | "provider"> & { ip: string | null };
 
 export interface Provider {
   name: string;
   serverOnly?: boolean;
-  lookup(ip: string): Promise<Location>;
+  lookup(ip: string): Promise<ProviderResult>;
+  lookupSelf?(): Promise<ProviderResult>;
+}
+
+export function withSelfLookup(provider: Omit<Provider, "lookup" | "lookupSelf"> & {
+  lookup(ip?: string): Promise<ProviderResult>;
+}): Provider {
+  return { ...provider, lookupSelf: () => provider.lookup() };
 }
 
 export async function fetchJson(url: string, init?: RequestInit): Promise<Record<string, unknown>> {
@@ -24,8 +31,9 @@ export async function fetchJson(url: string, init?: RequestInit): Promise<Record
   }
 }
 
-export function normalizeLocation(fields: Partial<Record<keyof Location, unknown>>): Location {
+export function normalizeLocation(fields: Partial<Record<keyof ProviderResult, unknown>>): ProviderResult {
   return {
+    ip: readText(fields.ip),
     countryCode: readCountryCode(fields.countryCode),
     countryName: readText(fields.countryName),
     region: readText(fields.region),

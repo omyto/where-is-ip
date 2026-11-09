@@ -17,6 +17,6 @@ export interface LookupOptions {
 }
 
 export const geoip: {
-  lookup(ip: string, options?: LookupOptions): Promise<GeoIpResult>;
+  lookup(ip?: string, options?: LookupOptions): Promise<GeoIpResult>;
   lookupMany(ips: readonly string[], options?: LookupOptions): Promise<GeoIpResult[]>;
 } = { lookup, lookupMany };

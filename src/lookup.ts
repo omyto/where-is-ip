@@ -4,8 +4,9 @@ import type { Provider } from "./providers/shared.js";
 
 const batchConcurrency = 4;
 
-export async function lookup(ip: string, options?: LookupOptions): Promise<GeoIpResult> {
-  return lookupFromProviders(normalizeIp(ip), getProviders(options?.providers));
+export async function lookup(ip?: string, options?: LookupOptions): Promise<GeoIpResult> {
+  const address = ip === undefined ? undefined : normalizeIp(ip);
+  return lookupFromProviders(address, getProviders(options?.providers));
 }
 
 export async function lookupMany(ips: readonly string[], options?: LookupOptions): Promise<GeoIpResult[]> {
@@ -24,25 +25,31 @@ export async function lookupMany(ips: readonly string[], options?: LookupOptions
   return results;
 }
 
-async function lookupFromProviders(ip: string, providers: readonly Provider[]): Promise<GeoIpResult> {
+async function lookupFromProviders(ip: string | undefined, providers: readonly Provider[]): Promise<GeoIpResult> {
   const errors: Error[] = [];
 
   for (const provider of providers) {
     try {
-      const location = await provider.lookup(ip);
+      const attempt = ip === undefined ? provider.lookupSelf?.() : provider.lookup(ip);
+      if (!attempt) continue;
+
+      const { ip: detectedIp, ...location } = await attempt;
       if (!location.countryCode && !location.countryName) {
         throw new Error("Response did not include a country");
       }
-      return { ip, ...location, provider: provider.name };
+      return { ip: ip ?? normalizeIp(detectedIp), ...location, provider: provider.name };
     } catch (cause) {
       errors.push(new Error(`${provider.name} lookup failed`, { cause }));
     }
   }
 
-  throw new AggregateError(errors, `IP geolocation failed for ${ip}`);
+  if (errors.length === 0) {
+    throw new TypeError("No selected geolocation provider supports caller IP lookup");
+  }
+  throw new AggregateError(errors, `IP geolocation failed for ${ip ?? "the caller"}`);
 }
 
-function normalizeIp(input: string): string {
+function normalizeIp(input: unknown): string {
   if (typeof input !== "string") throw new TypeError("Expected an IP address string");
 
   const ip = input.trim();

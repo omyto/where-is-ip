@@ -1,11 +1,12 @@
-import { fetchJson, normalizeLocation } from "./shared.js";
-import type { Provider } from "./shared.js";
+import { fetchJson, normalizeLocation, withSelfLookup } from "./shared.js";
 
-export const ipsb: Provider = {
+export const ipsb = withSelfLookup({
   name: "ipsb",
   async lookup(ip) {
-    const data = await fetchJson(`https://api.ip.sb/geoip/${ip}`);
+    const url = ip ? `https://api.ip.sb/geoip/${ip}` : "https://api.ip.sb/geoip";
+    const data = await fetchJson(url);
     return normalizeLocation({
+      ip: data.ip,
       countryCode: data.country_code,
       countryName: data.country,
       region: data.region,
@@ -15,4 +16,4 @@ export const ipsb: Provider = {
       timezone: data.timezone,
     });
   },
-};
+});

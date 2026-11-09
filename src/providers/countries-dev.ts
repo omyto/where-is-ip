@@ -1,13 +1,14 @@
-import { fetchJson, normalizeLocation, readObject } from "./shared.js";
-import type { Provider } from "./shared.js";
+import { fetchJson, normalizeLocation, readObject, withSelfLookup } from "./shared.js";
 
-export const countriesDev: Provider = {
+export const countriesDev = withSelfLookup({
   name: "countries-dev",
   async lookup(ip) {
-    const data = await fetchJson(`https://countries.dev/ip/${ip}`);
+    const url = ip ? `https://countries.dev/ip/${ip}` : "https://countries.dev/ip";
+    const data = await fetchJson(url);
     return normalizeLocation({
+      ip: data.ip,
       countryCode: data.countryCode,
       countryName: readObject(data.country)?.name,
     });
   },
-};
+});

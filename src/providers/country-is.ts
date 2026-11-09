@@ -1,12 +1,12 @@
-import { fetchJson, normalizeLocation, readObject } from "./shared.js";
-import type { Provider } from "./shared.js";
+import { fetchJson, normalizeLocation, readObject, withSelfLookup } from "./shared.js";
 
-export const countryIs: Provider = {
+export const countryIs = withSelfLookup({
   name: "country-is",
   async lookup(ip) {
-    const data = await fetchJson(`https://api.country.is/${ip}?fields=city,location`);
+    const data = await fetchJson(`https://api.country.is/${ip ?? ""}?fields=city,location`);
     const location = readObject(data.location);
     return normalizeLocation({
+      ip: data.ip,
       countryCode: data.country,
       city: data.city,
       latitude: location?.latitude,
@@ -14,4 +14,4 @@ export const countryIs: Provider = {
       timezone: location?.time_zone,
     });
   },
-};
+});

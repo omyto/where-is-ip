@@ -1,13 +1,13 @@
-import { fetchJson, normalizeLocation, readObject, readText } from "./shared.js";
-import type { Provider } from "./shared.js";
+import { fetchJson, normalizeLocation, readObject, readText, withSelfLookup } from "./shared.js";
 
-export const ipwhois: Provider = {
+export const ipwhois = withSelfLookup({
   name: "ipwhois",
   async lookup(ip) {
-    const data = await fetchJson(`https://ipwho.is/${ip}`);
+    const data = await fetchJson(`https://ipwho.is/${ip ?? ""}`);
     if (data.success !== true) throw new Error(readText(data.message) ?? "Lookup was unsuccessful");
 
     return normalizeLocation({
+      ip: data.ip,
       countryCode: data.country_code,
       countryName: data.country,
       region: data.region,
@@ -17,4 +17,4 @@ export const ipwhois: Provider = {
       timezone: readObject(data.timezone)?.id,
     });
   },
-};
+});
