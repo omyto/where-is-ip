@@ -1,9 +1,9 @@
-import type { GeoIpResult, LookupOptions } from "./index.js";
+import type { GeoIpResult } from "./index.js";
 import { getProviders } from "./providers/index.js";
 
-export async function lookup(ip?: string, options?: LookupOptions): Promise<GeoIpResult> {
+export async function lookup(ip?: string): Promise<GeoIpResult> {
   const address = ip === undefined ? undefined : normalizeIp(ip);
-  const providers = getProviders(options?.providers);
+  const providers = getProviders();
   const errors: Error[] = [];
 
   for (const provider of providers) {
@@ -21,10 +21,6 @@ export async function lookup(ip?: string, options?: LookupOptions): Promise<GeoI
     }
   }
 
-  if (errors.length === 0) {
-    const mode = address === undefined ? "caller IP lookup" : "explicit IP lookup";
-    throw new TypeError(`No selected geolocation provider supports ${mode}`);
-  }
   throw new AggregateError(errors, `IP geolocation failed for ${address ?? "the caller"}`);
 }
 

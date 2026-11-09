@@ -27,7 +27,7 @@ With no IP argument, `lookup()` uses the caller's public IP. Call it in the brow
 
 The result includes `ip`, `countryCode`, `countryName`, `region`, `city`, `latitude`, `longitude`, and `provider`. Missing location fields are `null`.
 
-`lookup()` rejects if the input is invalid or no selected provider can return a location.
+`lookup()` rejects if the input is invalid or no provider can return a location.
 
 ## Browser via CDN
 
@@ -45,33 +45,21 @@ Use a specific version instead of `@latest` if you want the page to load the sam
 
 ## Providers
 
-`lookup()` accepts an optional `providers` array to set the fallback order for that call.
+The library tries providers in table order and skips any that do not support the current runtime or lookup mode. **Specified IP** corresponds to `lookup(ip)`, and **Caller IP** corresponds to `lookup()`.
 
-```js
-const location = await geoip.lookup("8.8.8.8", { providers: ["geojs", "country-is"] });
-```
-
-For caller IP lookups with a custom order, pass `undefined` as the first argument. For example, `geoip.lookup(undefined, { providers: ["cloudflare"] })` uses Cloudflare Trace to get the caller's IP and country code.
-
-| Provider | ID | Specified IP | Caller IP | Browser | In default chain |
-| --- | --- | :---: | :---: | :---: | :---: |
-| [FreeIPAPI](https://freeipapi.com/) | `freeipapi` | ✓ | ✓ | ✓ | ✓ |
-| [IPWhois](https://ipwhois.io/) | `ipwhois` | ✓ | ✓ | ✓ | ✓ |
-| [GeoJS](https://www.geojs.io/) | `geojs` | ✓ | ✓ | ✓ | ✓ |
-| [IP2Location.io](https://www.ip2location.io/) | `ip2location` | ✓ | ✓ | — | ✓ |
-| [IP Info](https://ip-info.com/) | `ip-info` | ✓ | ✓ | ✓ | ✓ |
-| [IPinfo](https://ipinfo.io/) | `ipinfo` | ✓ | ✓ | ✓ | ✓ |
-| [ipapi.is](https://ipapi.is/) | `ipapi-is` | ✓ | ✓ | ✓ | ✓ |
-| [Country.is](https://country.is/) | `country-is` | ✓ | ✓ | ✓ | ✓ |
-| [Cloudflare Trace](https://www.cloudflare.com/) | `cloudflare` | — | ✓ | ✓ | ✓ |
-| [IP.SB](https://ip.sb/) | `ipsb` | ✓ | ✓ | ✓ | — |
-| [IP-API.com](https://ip-api.com/) | `ip-api` | ✓ | ✓ | — | — |
-
-**Specified IP** corresponds to `lookup(ip)`, and **Caller IP** corresponds to `lookup()`. The **In default chain** column shows which providers are tried when `providers` is omitted. The library tries them in table order and skips any that do not support the current runtime or lookup mode. A dash in that column means the provider requires explicit selection.
+| Provider | ID | Specified IP | Caller IP | Browser |
+| --- | --- | :---: | :---: | :---: |
+| [FreeIPAPI](https://freeipapi.com/) | `freeipapi` | ✓ | ✓ | ✓ |
+| [IPWhois](https://ipwhois.io/) | `ipwhois` | ✓ | ✓ | ✓ |
+| [GeoJS](https://www.geojs.io/) | `geojs` | ✓ | ✓ | ✓ |
+| [IP2Location.io](https://www.ip2location.io/) | `ip2location` | ✓ | ✓ | — |
+| [IP Info](https://ip-info.com/) | `ip-info` | ✓ | ✓ | ✓ |
+| [IPinfo](https://ipinfo.io/) | `ipinfo` | ✓ | ✓ | ✓ |
+| [ipapi.is](https://ipapi.is/) | `ipapi-is` | ✓ | ✓ | ✓ |
+| [Country.is](https://country.is/) | `country-is` | ✓ | ✓ | ✓ |
+| [Cloudflare Trace](https://www.cloudflare.com/) | `cloudflare` | — | ✓ | ✓ |
 
 `cloudflare` returns country-level results.
-
-The opt-in providers have restrictions on their free tiers. [IP.SB](https://ip.sb/pricing/) allows personal use and evaluation. [IP-API.com](https://ip-api.com/docs/legal) uses plain HTTP and allows non-commercial use only on its free tier.
 
 ## Build locally
 
