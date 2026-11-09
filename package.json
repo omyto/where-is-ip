@@ -2,6 +2,7 @@
   "name": "ip-geolocation",
   "version": "0.1.0",
   "description": "Look up IP locations with native fetch and automatic fallback between keyless providers.",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.cjs",
   "jsdelivr": "./dist/index.js",

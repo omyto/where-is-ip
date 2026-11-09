@@ -27,6 +27,8 @@ With no IP argument, `lookup()` uses the caller's public IP. Call it in the brow
 
 The result includes `ip`, `countryCode`, `countryName`, `region`, `city`, `latitude`, `longitude`, `timezone`, and `provider`. Missing location fields are `null`.
 
+`lookup()` rejects if the input is invalid or no selected provider can return a location.
+
 ## Browser via CDN
 
 Use `ip-geolocation` directly in an HTML page served over HTTP or HTTPS. Import the ESM bundle from jsDelivr without installing the package locally.
@@ -84,3 +86,7 @@ npm run build
 ```
 
 The build creates `dist/index.js`, `dist/index.cjs`, and their TypeScript declarations. To try the browser build locally, serve the project over HTTP and use `./dist/index.js` as the import URL.
+
+## License
+
+[MIT](LICENSE)
