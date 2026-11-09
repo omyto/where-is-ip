@@ -8,7 +8,6 @@ import { ipInfo } from "./ip-info.js";
 import { ip2location } from "./ip2location.js";
 import { ipapiIs } from "./ipapi-is.js";
 import { ipinfo } from "./ipinfo.js";
-import { iplocationNet } from "./iplocation-net.js";
 import { ipsb } from "./ipsb.js";
 import { ipsnapshot } from "./ipsnapshot.js";
 import { ipwhois } from "./ipwhois.js";
@@ -16,7 +15,7 @@ import type { Provider } from "./shared.js";
 
 const defaultProviders = [
   freeipapi, ipwhois, geojs, ip2location, ipInfo, ipinfo, dbip, ipapiIs,
-  countryIs, iplocationNet, cloudflare,
+  countryIs, cloudflare,
 ];
 const providers = [...defaultProviders, ipsb, ipsnapshot, ipApi];
 
