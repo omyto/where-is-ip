@@ -1,12 +1,11 @@
 import type { GeoIpResult } from "./index.js";
-import { getProviders } from "./providers/index.js";
+import { providers } from "./providers/index.js";
 import { ProviderRateLimitError } from "./providers/shared.js";
 
 const providerRetryTimes = new Map<string, number>();
 
 export async function lookup(ip?: string): Promise<GeoIpResult> {
   const address = ip === undefined ? undefined : normalizeIp(ip);
-  const providers = getProviders();
   const errors: Error[] = [];
 
   for (const provider of providers) {

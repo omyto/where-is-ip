@@ -8,12 +8,12 @@ import { ipinfo } from "./ipinfo.js";
 import { ipwhois } from "./ipwhois.js";
 import type { Provider } from "./shared.js";
 
-const providers = [
+const allProviders = [
   ipwhois, ipInfo, geojs, countryIs,
   ipinfo, freeipapi, ip2location, cloudflare,
 ];
 
-export function getProviders(): Provider[] {
-  const isServer = typeof globalThis.location === "undefined";
-  return providers.filter(provider => isServer || !provider.serverOnly);
-}
+const isServer = typeof globalThis.location === "undefined";
+export const providers: readonly Provider[] = isServer
+  ? allProviders
+  : allProviders.filter(provider => !provider.serverOnly);
