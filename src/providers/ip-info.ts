@@ -3,8 +3,9 @@ import { fetchJson, normalizeLocation, withSelfLookup } from "./shared.js";
 export const ipInfo = withSelfLookup({
   name: "ip-info",
   async lookup(ip) {
-    const url = ip ? `https://ip-info.com/json?ip=${encodeURIComponent(ip)}` : "https://ip-info.com/json";
-    const data = await fetchJson(url);
+    const url = new URL("https://ip-info.com/json");
+    if (ip) url.searchParams.set("ip", ip);
+    const data = await fetchJson(url.href);
     return normalizeLocation({
       ip: data.ip,
       countryCode: data.country,

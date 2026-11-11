@@ -4,8 +4,9 @@ export const ip2location = withSelfLookup({
   name: "ip2location",
   serverOnly: true,
   async lookup(ip) {
-    const url = ip ? `https://api.ip2location.io/?ip=${encodeURIComponent(ip)}` : "https://api.ip2location.io/?format=json";
-    const data = await fetchJson(url);
+    const url = new URL("https://api.ip2location.io/?format=json");
+    if (ip) url.searchParams.set("ip", ip);
+    const data = await fetchJson(url.href);
     return normalizeLocation({
       ip: data.ip,
       countryCode: data.country_code,
