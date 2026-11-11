@@ -112,3 +112,21 @@ test("rejects without sending requests when all eligible providers are cooling d
   await assert.rejects(geoip.lookup(ip), { name: "AggregateError" });
   assert.equal(requests.length, requestCount);
 });
+
+test("uses Cloudflare as the final fallback for caller IP only", async () => {
+  const traceUrl = "https://www.cloudflare.com/cdn-cgi/trace";
+  const { geoip, requests } = mockLookup(url => {
+    if (url.href === traceUrl) return new Response(`ip=${ip}\nloc=US\n`);
+    return new Response(null, { status: 503 });
+  });
+
+  const result = await geoip.lookup();
+  assert.equal(result.provider, "cloudflare");
+  assert.equal(result.ip, ip);
+  assert.equal(requests.at(-1), traceUrl);
+  assert.ok(requests.length > 1);
+
+  requests.length = 0;
+  await assert.rejects(geoip.lookup(ip), { name: "AggregateError" });
+  assert.ok(!requests.includes(traceUrl));
+});

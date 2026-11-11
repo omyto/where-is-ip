@@ -1,6 +1,7 @@
-import { fetchJson, normalizeLocation, withSelfLookup } from "./shared.js";
+import { fetchJson, normalizeLocation } from "./shared.js";
+import type { Provider } from "./shared.js";
 
-export const ip2location = withSelfLookup({
+export const ip2location: Provider = {
   name: "ip2location",
   serverOnly: true,
   async lookup(ip) {
@@ -17,4 +18,4 @@ export const ip2location = withSelfLookup({
       longitude: data.longitude,
     });
   },
-});
+};

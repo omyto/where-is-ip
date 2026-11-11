@@ -1,6 +1,7 @@
-import { fetchJson, normalizeLocation, readObject, withSelfLookup } from "./shared.js";
+import { fetchJson, normalizeLocation, readObject } from "./shared.js";
+import type { Provider } from "./shared.js";
 
-export const countryIs = withSelfLookup({
+export const countryIs: Provider = {
   name: "country-is",
   async lookup(ip) {
     const data = await fetchJson(`https://api.country.is/${ip ?? ""}?fields=city,location`);
@@ -13,4 +14,4 @@ export const countryIs = withSelfLookup({
       longitude: location?.longitude,
     });
   },
-});
+};

@@ -10,8 +10,7 @@ export async function lookup(ip?: string): Promise<GeoIpResult> {
   const errors: Error[] = [];
 
   for (const provider of providers) {
-    const attempt = address === undefined ? provider.lookupSelf : provider.lookup?.bind(provider, address);
-    if (!attempt) continue;
+    if (address !== undefined && provider.callerOnly) continue;
 
     const retryAt = providerRetryTimes.get(provider.name);
     if (retryAt !== undefined) {
@@ -23,7 +22,7 @@ export async function lookup(ip?: string): Promise<GeoIpResult> {
     }
 
     try {
-      const { ip: detectedIp, countryCode, ...location } = await attempt.call(provider);
+      const { ip: detectedIp, countryCode, ...location } = await provider.lookup(address);
       if (!countryCode) {
         errors.push(new Error(`${provider.name} response did not include a country code`));
         continue;

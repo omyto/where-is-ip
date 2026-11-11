@@ -1,6 +1,7 @@
-import { fetchJson, normalizeLocation, withSelfLookup } from "./shared.js";
+import { fetchJson, normalizeLocation } from "./shared.js";
+import type { Provider } from "./shared.js";
 
-export const geojs = withSelfLookup({
+export const geojs: Provider = {
   name: "geojs",
   async lookup(ip) {
     const data = await fetchJson(`https://get.geojs.io/v1/ip/geo${ip ? `/${ip}` : ""}.json`);
@@ -15,4 +16,4 @@ export const geojs = withSelfLookup({
       longitude: data.longitude,
     });
   },
-});
+};

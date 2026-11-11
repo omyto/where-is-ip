@@ -1,6 +1,7 @@
-import { fetchJson, normalizeLocation, readText, withSelfLookup } from "./shared.js";
+import { fetchJson, normalizeLocation, readText } from "./shared.js";
+import type { Provider } from "./shared.js";
 
-export const ipinfo = withSelfLookup({
+export const ipinfo: Provider = {
   name: "ipinfo",
   async lookup(ip) {
     const data = await fetchJson(`https://ipinfo.io${ip ? `/${ip}` : ""}/json`);
@@ -14,4 +15,4 @@ export const ipinfo = withSelfLookup({
       longitude,
     });
   },
-});
+};

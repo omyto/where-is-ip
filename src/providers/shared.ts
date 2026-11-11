@@ -8,8 +8,8 @@ type ProviderResult = Omit<GeoIpResult, "ip" | "countryCode" | "provider"> & {
 export interface Provider {
   name: string;
   serverOnly?: boolean;
-  lookup?(ip: string): Promise<ProviderResult>;
-  lookupSelf?(): Promise<ProviderResult>;
+  callerOnly?: boolean;
+  lookup(ip?: string): Promise<ProviderResult>;
 }
 
 const DEFAULT_RETRY_DELAY_MS = 30_000;
@@ -18,12 +18,6 @@ export class ProviderRateLimitError extends Error {
   constructor(readonly retryAt: number) {
     super("HTTP 429");
   }
-}
-
-export function withSelfLookup(provider: Omit<Provider, "lookup" | "lookupSelf"> & {
-  lookup(ip?: string): Promise<ProviderResult>;
-}): Provider {
-  return { ...provider, lookupSelf: () => provider.lookup() };
 }
 
 export async function fetchJson(url: string, init?: RequestInit): Promise<Record<string, unknown>> {

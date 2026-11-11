@@ -1,6 +1,7 @@
-import { fetchJson, normalizeLocation, withSelfLookup } from "./shared.js";
+import { fetchJson, normalizeLocation } from "./shared.js";
+import type { Provider } from "./shared.js";
 
-export const freeipapi = withSelfLookup({
+export const freeipapi: Provider = {
   name: "freeipapi",
   async lookup(ip) {
     const data = await fetchJson(`https://free.freeipapi.com/api/v1/json${ip ? `/${ip}` : ""}`);
@@ -15,4 +16,4 @@ export const freeipapi = withSelfLookup({
       longitude: data.longitude,
     });
   },
-});
+};
