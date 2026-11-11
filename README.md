@@ -23,13 +23,12 @@ For CommonJS, use `const { geoip } = require("where-is-ip")`.
 
 ### Browser via CDN
 
-Import the ESM bundle from jsDelivr.
+Load the IIFE bundle from jsDelivr to use the global `geoip` object.
 
 ```html
-<script type="module">
-  import { geoip } from "https://cdn.jsdelivr.net/npm/where-is-ip@latest";
-
-  console.log(await geoip.lookup("8.8.8.8"));
+<script src="https://cdn.jsdelivr.net/npm/where-is-ip@latest/dist/index.global.js"></script>
+<script>
+  geoip.lookup("8.8.8.8").then(console.log).catch(console.error);
 </script>
 ```
 
