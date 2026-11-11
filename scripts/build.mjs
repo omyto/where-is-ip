@@ -14,6 +14,7 @@ await Promise.all([
     ...options,
     entryPoints: ["src/browser.ts"],
     format: "iife",
+    minify: true,
     platform: "browser",
     outfile: "dist/index.global.js",
   }),
