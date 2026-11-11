@@ -1,5 +1,8 @@
 import type { GeoIpResult } from "./index.js";
 import { getProviders } from "./providers/index.js";
+import { ProviderRateLimitError } from "./providers/shared.js";
+
+const providerRetryTimes = new Map<string, number>();
 
 export async function lookup(ip?: string): Promise<GeoIpResult> {
   const address = ip === undefined ? undefined : normalizeIp(ip);
@@ -7,17 +10,30 @@ export async function lookup(ip?: string): Promise<GeoIpResult> {
   const errors: Error[] = [];
 
   for (const provider of providers) {
-    try {
-      const attempt = address === undefined ? provider.lookupSelf?.() : provider.lookup?.(address);
-      if (!attempt) continue;
+    const attempt = address === undefined ? provider.lookupSelf : provider.lookup?.bind(provider, address);
+    if (!attempt) continue;
 
-      const { ip: detectedIp, countryCode, ...location } = await attempt;
+    const retryAt = providerRetryTimes.get(provider.name);
+    if (retryAt !== undefined) {
+      if (retryAt > Date.now()) {
+        errors.push(new Error(`${provider.name} is temporarily rate limited`));
+        continue;
+      }
+      providerRetryTimes.delete(provider.name);
+    }
+
+    try {
+      const { ip: detectedIp, countryCode, ...location } = await attempt.call(provider);
       if (!countryCode) {
         errors.push(new Error(`${provider.name} response did not include a country code`));
         continue;
       }
       return { ip: address ?? normalizeIp(detectedIp), countryCode, ...location, provider: provider.name };
     } catch (cause) {
+      if (cause instanceof ProviderRateLimitError) {
+        const currentRetryAt = providerRetryTimes.get(provider.name) ?? 0;
+        providerRetryTimes.set(provider.name, Math.max(currentRetryAt, cause.retryAt));
+      }
       errors.push(new Error(`${provider.name} lookup failed`, { cause }));
     }
   }

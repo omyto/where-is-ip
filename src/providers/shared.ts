@@ -12,6 +12,14 @@ export interface Provider {
   lookupSelf?(): Promise<ProviderResult>;
 }
 
+const DEFAULT_RETRY_DELAY_MS = 30_000;
+
+export class ProviderRateLimitError extends Error {
+  constructor(readonly retryAt: number) {
+    super("HTTP 429");
+  }
+}
+
 export function withSelfLookup(provider: Omit<Provider, "lookup" | "lookupSelf"> & {
   lookup(ip?: string): Promise<ProviderResult>;
 }): Provider {
@@ -34,12 +42,28 @@ async function fetchBody<T>(url: string, read: (response: Response) => Promise<T
 
   try {
     const response = await fetch(url, { ...init, signal: controller.signal });
+    if (response.status === 429) {
+      throw new ProviderRateLimitError(getRetryTime(response.headers.get("Retry-After")));
+    }
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
     return await read(response);
   } finally {
     clearTimeout(timeout);
   }
+}
+
+function getRetryTime(header: string | null): number {
+  const now = Date.now();
+  const value = header?.trim() ?? "";
+  if (/^\d+$/.test(value)) {
+    const retryAt = now + Number(value) * 1000;
+    if (Number.isSafeInteger(retryAt)) return retryAt;
+  } else if (/^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)/i.test(value)) {
+    const retryAt = Date.parse(value);
+    if (Number.isFinite(retryAt)) return retryAt;
+  }
+  return now + DEFAULT_RETRY_DELAY_MS;
 }
 
 export function normalizeLocation(fields: Partial<Record<keyof ProviderResult, unknown>>): ProviderResult {
