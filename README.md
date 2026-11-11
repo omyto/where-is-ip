@@ -44,7 +44,7 @@ The same file is also available on [UNPKG](https://unpkg.com/where-is-ip@latest/
 ### Result
 
 ```ts
-export interface GeoIpResult {
+interface GeoIpResult {
   ip: string;
   countryCode: string;
   countryName: string | null;
@@ -55,6 +55,8 @@ export interface GeoIpResult {
   provider: string;
 }
 ```
+
+Fields marked `| null` are `null` when the provider has no usable data for them.
 
 ## Providers
 
