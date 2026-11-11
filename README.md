@@ -23,7 +23,7 @@ For CommonJS, use `const { geoip } = require("where-is-ip")`.
 
 ### Browser via CDN
 
-Load the IIFE bundle from jsDelivr to use the global `geoip` object.
+Use directly in the browser.
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/where-is-ip@latest/dist/index.global.js"></script>
@@ -31,6 +31,8 @@ Load the IIFE bundle from jsDelivr to use the global `geoip` object.
   geoip.lookup("8.8.8.8").then(console.log).catch(console.error);
 </script>
 ```
+
+The same file is also available on [UNPKG](https://unpkg.com/where-is-ip@latest/dist/index.global.js).
 
 ### Methods
 
