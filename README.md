@@ -2,19 +2,15 @@
 
 Look up public IPv4 and IPv6 locations with automatic fallback and no API key.
 
-## Install
-
-Install [`where-is-ip`](https://www.npmjs.com/package/where-is-ip) from npm.
-
-```sh
-npm install where-is-ip
-```
-
 ## Usage
 
 The package supports modern browsers and Node.js 18 or later.
 
 ### npm
+
+```sh
+npm install where-is-ip
+```
 
 ```js
 import { geoip } from "where-is-ip";
@@ -61,11 +57,10 @@ export interface GeoIpResult {
 
 ## Providers
 
-Each provider attempt has a 2-second timeout.
+Each provider attempt has a 2-second timeout. Cloudflare Trace is the final fallback for `lookup()`.
 
 | Provider | ID | Specified IP | Caller IP | Browser |
 | --- | --- | :---: | :---: | :---: |
-| [Cloudflare Trace](https://www.cloudflare.com/) | `cloudflare` | — | ✓ | ✓ |
 | [Country.is](https://country.is/) | `country-is` | ✓ | ✓ | ✓ |
 | [FreeIPAPI](https://freeipapi.com/) | `freeipapi` | ✓ | ✓ | ✓ |
 | [GeoJS](https://www.geojs.io/) | `geojs` | ✓ | ✓ | ✓ |
@@ -73,3 +68,4 @@ Each provider attempt has a 2-second timeout.
 | [IP2Location.io](https://www.ip2location.io/) | `ip2location` | ✓ | ✓ | — |
 | [IPinfo](https://ipinfo.io/) | `ipinfo` | ✓ | ✓ | ✓ |
 | [IPWhois](https://ipwhois.io/) | `ipwhois` | ✓ | ✓ | ✓ |
+| [Cloudflare Trace](https://www.cloudflare.com/) | `cloudflare` | — | ✓ | ✓ |
