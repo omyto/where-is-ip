@@ -61,15 +61,15 @@ export interface GeoIpResult {
 
 ## Providers
 
-Providers are tried in table order with a 2-second timeout per attempt.
+Each provider attempt has a 2-second timeout.
 
 | Provider | ID | Specified IP | Caller IP | Browser |
 | --- | --- | :---: | :---: | :---: |
-| [IPWhois](https://ipwhois.io/) | `ipwhois` | ✓ | ✓ | ✓ |
-| [IP Info](https://ip-info.com/) | `ip-info` | ✓ | ✓ | ✓ |
-| [GeoJS](https://www.geojs.io/) | `geojs` | ✓ | ✓ | ✓ |
 | [Cloudflare Trace](https://www.cloudflare.com/) | `cloudflare` | — | ✓ | ✓ |
 | [Country.is](https://country.is/) | `country-is` | ✓ | ✓ | ✓ |
-| [IPinfo](https://ipinfo.io/) | `ipinfo` | ✓ | ✓ | ✓ |
 | [FreeIPAPI](https://freeipapi.com/) | `freeipapi` | ✓ | ✓ | ✓ |
+| [GeoJS](https://www.geojs.io/) | `geojs` | ✓ | ✓ | ✓ |
+| [IP Info](https://ip-info.com/) | `ip-info` | ✓ | ✓ | ✓ |
 | [IP2Location.io](https://www.ip2location.io/) | `ip2location` | ✓ | ✓ | — |
+| [IPinfo](https://ipinfo.io/) | `ipinfo` | ✓ | ✓ | ✓ |
+| [IPWhois](https://ipwhois.io/) | `ipwhois` | ✓ | ✓ | ✓ |
