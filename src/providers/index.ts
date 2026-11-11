@@ -9,8 +9,8 @@ import { ipwhois } from "./ipwhois.js";
 import type { Provider } from "./shared.js";
 
 const providers = [
-  freeipapi, ipwhois, geojs, ip2location, ipInfo, ipinfo,
-  countryIs, cloudflare,
+  ipwhois, ipInfo, geojs, cloudflare,
+  countryIs, ipinfo, freeipapi, ip2location,
 ];
 
 export function getProviders(): Provider[] {

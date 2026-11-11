@@ -65,11 +65,11 @@ Providers are tried in table order with a 2-second timeout per attempt.
 
 | Provider | ID | Specified IP | Caller IP | Browser |
 | --- | --- | :---: | :---: | :---: |
-| [FreeIPAPI](https://freeipapi.com/) | `freeipapi` | ✓ | ✓ | ✓ |
 | [IPWhois](https://ipwhois.io/) | `ipwhois` | ✓ | ✓ | ✓ |
-| [GeoJS](https://www.geojs.io/) | `geojs` | ✓ | ✓ | ✓ |
-| [IP2Location.io](https://www.ip2location.io/) | `ip2location` | ✓ | ✓ | — |
 | [IP Info](https://ip-info.com/) | `ip-info` | ✓ | ✓ | ✓ |
-| [IPinfo](https://ipinfo.io/) | `ipinfo` | ✓ | ✓ | ✓ |
-| [Country.is](https://country.is/) | `country-is` | ✓ | ✓ | ✓ |
+| [GeoJS](https://www.geojs.io/) | `geojs` | ✓ | ✓ | ✓ |
 | [Cloudflare Trace](https://www.cloudflare.com/) | `cloudflare` | — | ✓ | ✓ |
+| [Country.is](https://country.is/) | `country-is` | ✓ | ✓ | ✓ |
+| [IPinfo](https://ipinfo.io/) | `ipinfo` | ✓ | ✓ | ✓ |
+| [FreeIPAPI](https://freeipapi.com/) | `freeipapi` | ✓ | ✓ | ✓ |
+| [IP2Location.io](https://www.ip2location.io/) | `ip2location` | ✓ | ✓ | — |
