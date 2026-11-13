@@ -4,9 +4,9 @@ Look up public IPv4 and IPv6 locations with automatic fallback and no API key.
 
 ## Usage
 
-The package supports modern browsers and Node.js 18 or later.
+### Install with npm
 
-### npm
+Use with Node.js 18 or later, or with a browser bundler.
 
 ```sh
 npm install where-is-ip
@@ -19,22 +19,24 @@ const location = await geoip.lookup("8.8.8.8");
 const currentLocation = await geoip.lookup();
 ```
 
-For CommonJS, use `const { geoip } = require("where-is-ip")`.
+*\* For CommonJS, use `const { geoip } = require("where-is-ip")`.*
 
-### Browser via CDN
+### Use in the browser via CDN
 
-Use directly in the browser.
+Add these scripts to an HTML page.
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/where-is-ip@latest/dist/index.global.js"></script>
 <script>
-  geoip.lookup("8.8.8.8").then(console.log).catch(console.error);
+  geoip.lookup("8.8.8.8")
+    .then(console.log)
+    .catch(console.error);
 </script>
 ```
 
-The same file is also available on [UNPKG](https://unpkg.com/where-is-ip@latest/dist/index.global.js).
+*\* The same file is available on [UNPKG](https://unpkg.com/where-is-ip@latest/dist/index.global.js).*
 
-### Methods
+## API
 
 | Method | Looks up |
 | --- | --- |
@@ -60,7 +62,7 @@ Fields marked `| null` are `null` when the provider has no usable data for them.
 
 ## Providers
 
-Each provider attempt has a 2-second timeout. Cloudflare Trace is the final fallback for `lookup()`.
+Each provider attempt has a 2-second timeout.
 
 | Provider | ID | Specified IP | Caller IP | Browser |
 | --- | --- | :---: | :---: | :---: |
@@ -72,3 +74,5 @@ Each provider attempt has a 2-second timeout. Cloudflare Trace is the final fall
 | [IPinfo](https://ipinfo.io/) | `ipinfo` | ✓ | ✓ | ✓ |
 | [IPWhois](https://ipwhois.io/) | `ipwhois` | ✓ | ✓ | ✓ |
 | [Cloudflare Trace](https://www.cloudflare.com/) | `cloudflare` | — | ✓ | ✓ |
+
+*\* Cloudflare Trace is the final fallback for `lookup()`.*

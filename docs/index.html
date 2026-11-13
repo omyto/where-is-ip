@@ -93,7 +93,7 @@
 
 const location = await geoip.lookup("8.8.8.8");
 const currentLocation = await geoip.lookup();</code></pre>
-          <p>For CommonJS, use <code>const { geoip } = require("where-is-ip")</code>.</p>
+          <p><small>* For CommonJS, use <code>const { geoip } = require("where-is-ip")</code>.</small></p>
         </div>
         <div class="example">
           <h3>Use in the browser via CDN</h3>
@@ -104,7 +104,7 @@ const currentLocation = await geoip.lookup();</code></pre>
     .then(console.log)
     .catch(console.error);
 &lt;/script&gt;</code></pre>
-          <p>The same file is available on <a href="https://unpkg.com/where-is-ip@latest/dist/index.global.js">UNPKG</a>.</p>
+          <p><small>* The same file is available on <a href="https://unpkg.com/where-is-ip@latest/dist/index.global.js">UNPKG</a>.</small></p>
         </div>
       </div>
     </section>
@@ -137,7 +137,7 @@ const currentLocation = await geoip.lookup();</code></pre>
 
     <section id="providers">
       <h2>Providers</h2>
-      <p>Each provider attempt has a 2-second timeout. Cloudflare Trace is the final fallback for <code>lookup()</code>.</p>
+      <p>Each provider attempt has a 2-second timeout.</p>
       <div class="table-scroll" tabindex="0" role="region" aria-label="Provider support">
         <table>
           <thead>
@@ -155,6 +155,7 @@ const currentLocation = await geoip.lookup();</code></pre>
           </tbody>
         </table>
       </div>
+      <p><small>* Cloudflare Trace is the final fallback for <code>lookup()</code>.</small></p>
     </section>
 
     <footer>
