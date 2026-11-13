@@ -6,7 +6,7 @@ const providerRetryTimes = new Map<string, number>();
 
 export async function lookup(ip?: string): Promise<GeoIpResult> {
   const address = ip === undefined ? undefined : normalizeIp(ip);
-  if (address !== undefined && isPrivateIp(address)) {
+  if (address !== undefined && isNonPublicIp(address)) {
     throw new RangeError(`${address} is not a public IP address and cannot be geolocated.`);
   }
   const errors: Error[] = [];
@@ -63,10 +63,10 @@ function normalizeIp(input: unknown): string {
   throw new TypeError(`Invalid IP address: ${input}`);
 }
 
-function isPrivateIp(ip: string): boolean {
+function isNonPublicIp(ip: string): boolean {
   if (!ip.includes(":")) {
     const [first, second] = ip.split(".").map(Number);
-    return isPrivateIpv4(first, second);
+    return isNonPublicIpv4(first, second);
   }
 
   // The URL parser canonicalizes IPv6, including IPv4-mapped addresses.
@@ -74,14 +74,18 @@ function isPrivateIp(ip: string): boolean {
   const mapped = address.match(/^::ffff:([a-f0-9]+):[a-f0-9]+$/);
   if (mapped) {
     const prefix = parseInt(mapped[1], 16);
-    return isPrivateIpv4(prefix >> 8, prefix & 0xff);
+    return isNonPublicIpv4(prefix >> 8, prefix & 0xff);
   }
 
-  return /^f[cd][a-f0-9]{2}:/.test(address);
+  return address === "::1" ||
+    /^f[cd][a-f0-9]{2}:/.test(address) ||
+    /^fe[89ab][a-f0-9]:/.test(address);
 }
 
-function isPrivateIpv4(first: number, second: number): boolean {
+function isNonPublicIpv4(first: number, second: number): boolean {
   return first === 10 ||
+    first === 127 ||
+    (first === 169 && second === 254) ||
     (first === 172 && second >= 16 && second <= 31) ||
     (first === 192 && second === 168);
 }

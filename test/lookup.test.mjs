@@ -60,7 +60,7 @@ test("looks up a specified IP and the caller's IP", async () => {
   assert.deepEqual(requests, [`https://ipwho.is/${ip}`, "https://ipwho.is/"]);
 });
 
-test("rejects private IPs before contacting providers", async () => {
+test("rejects private, loopback, and link-local IPs before contacting providers", async () => {
   const { geoip, requests } = mockLookup(ipwhoisResult);
 
   for (const address of [
@@ -72,6 +72,14 @@ test("rejects private IPs before contacting providers", async () => {
     "fd12:3456::1",
     "::ffff:192.168.1.2",
     "0:0:0:0:0:ffff:c0a8:102",
+    "127.0.0.1",
+    "127.255.255.255",
+    "169.254.1.2",
+    "0:0:0:0:0:0:0:1",
+    "fe80::1",
+    "FEBF::1",
+    "::ffff:127.0.0.1",
+    "::ffff:169.254.1.2",
   ]) {
     await assert.rejects(geoip.lookup(address), {
       name: "RangeError",
@@ -81,7 +89,7 @@ test("rejects private IPs before contacting providers", async () => {
   assert.deepEqual(requests, []);
 });
 
-test("accepts addresses outside the private ranges", async () => {
+test("accepts addresses outside the blocked ranges", async () => {
   const { geoip } = mockLookup(ipwhoisResult);
 
   for (const address of ["172.15.0.1", "172.32.0.1", "2001:4860::8888", "::ffff:8.8.8.8"]) {
