@@ -6,7 +6,7 @@ Look up public IPv4 and IPv6 locations with automatic fallback and no API key.
 
 ### Install with npm
 
-Use with Node.js 18 or later, or with a browser bundler.
+Requires Node.js 18 or later.
 
 ```sh
 npm install where-is-ip
