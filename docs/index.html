@@ -14,6 +14,7 @@
       --muted: #aebfbe;
       --line: #344649;
       --accent: #93e8ca;
+      --error: #ffb4ab;
       font: 100% / 1.6 Inter, system-ui, sans-serif;
     }
 
@@ -62,6 +63,7 @@
       cursor: pointer;
     }
     .lookup-form button:disabled { opacity: .6; cursor: default; }
+    #lookup-status.is-error { color: var(--error); }
     .examples { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
     .example {
       display: grid;
@@ -244,6 +246,7 @@ const currentLocation = await geoip.lookup();</code></pre>
     async function showLookup(ip) {
       button.disabled = true;
       result.hidden = true;
+      lookupStatus.classList.remove("is-error");
       lookupStatus.textContent = ip ? "Looking up IP address…" : "Looking up your public IP…";
 
       try {
@@ -253,6 +256,7 @@ const currentLocation = await geoip.lookup();</code></pre>
         result.hidden = false;
         lookupStatus.textContent = "Lookup complete.";
       } catch (error) {
+        lookupStatus.classList.add("is-error");
         if (error instanceof TypeError) {
           lookupStatus.textContent = "Enter a valid IPv4 or IPv6 address.";
         } else if (error instanceof RangeError) {
@@ -274,6 +278,7 @@ const currentLocation = await geoip.lookup();</code></pre>
     if (globalThis.geoip) {
       showLookup();
     } else {
+      lookupStatus.classList.add("is-error");
       lookupStatus.textContent = "Could not load the demo. Reload the page to try again.";
     }
   </script>
