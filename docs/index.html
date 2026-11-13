@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Look up public IPv4 and IPv6 locations with where-is-ip.">
+  <title>where-is-ip · Documentation</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --page: #10181b;
+      --panel: #172327;
+      --ink: #eef5f2;
+      --muted: #aebfbe;
+      --line: #344649;
+      --accent: #93e8ca;
+      font: 100% / 1.6 Inter, system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--page); color: var(--ink); }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+    .wrap { width: min(100% - 2.5rem, 64rem); margin-inline: auto; }
+    .top { border-bottom: 1px solid var(--line); }
+    .top .wrap, nav, footer { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .top .wrap { justify-content: space-between; min-height: 4rem; padding-block: .75rem; }
+    .brand { color: var(--ink); font-weight: 700; text-decoration: none; }
+    nav a { color: var(--muted); font-size: .9rem; text-decoration: none; }
+    nav a:hover, nav a:focus-visible { color: var(--accent); }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: clamp(2.75rem, 8vw, 5rem); line-height: 1.05; letter-spacing: -.06em; }
+    h2 { font-size: 1.65rem; letter-spacing: -.03em; }
+    h3 { font-size: 1.05rem; }
+    p { color: var(--muted); max-width: 66ch; }
+    .intro { padding-block: clamp(2.5rem, 8vw, 5rem) 2.5rem; }
+    .intro p { margin-top: 1rem; font-size: 1.15rem; }
+    section { border-top: 1px solid var(--line); padding-block: 2.25rem; }
+    section > :not(:first-child), .example > :not(:first-child) { margin-top: .85rem; }
+    .examples { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+    .example { min-width: 0; }
+    code { font-family: "IBM Plex Mono", ui-monospace, monospace; color: var(--accent); }
+    pre {
+      margin: 0;
+      padding: 1rem;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: .65rem;
+      background: var(--panel);
+      font-size: .875rem;
+    }
+    pre code { color: var(--ink); }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th, td { padding: .65rem .85rem; border-bottom: 1px solid var(--line); }
+    th { background: var(--panel); }
+    td { color: var(--muted); }
+    footer { border-top: 1px solid var(--line); padding-block: 1.5rem 2.5rem; }
+
+    @media (max-width: 44rem) {
+      .examples { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body id="top">
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="#top">where-is-ip</a>
+      <nav aria-label="Documentation">
+        <a href="#usage">Usage</a>
+        <a href="#api">API</a>
+        <a href="#providers">Providers</a>
+        <a href="https://github.com/omyto/where-is-ip">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <header class="intro">
+      <h1>where-is-ip</h1>
+      <p>Look up public IPv4 and IPv6 locations with automatic fallback and no API key.</p>
+    </header>
+
+    <section id="usage">
+      <h2>Usage</h2>
+      <div class="examples">
+        <div class="example">
+          <h3>Install with npm</h3>
+          <p>Use with Node.js 18 or later, or with a browser bundler.</p>
+          <pre tabindex="0"><code>npm install where-is-ip</code></pre>
+          <pre tabindex="0"><code>import { geoip } from "where-is-ip";
+
+const location = await geoip.lookup("8.8.8.8");
+const currentLocation = await geoip.lookup();</code></pre>
+          <p>For CommonJS, use <code>const { geoip } = require("where-is-ip")</code>.</p>
+        </div>
+        <div class="example">
+          <h3>Use in the browser via CDN</h3>
+          <p>Add these scripts to an HTML page.</p>
+          <pre tabindex="0"><code>&lt;script src="https://cdn.jsdelivr.net/npm/where-is-ip@latest/dist/index.global.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  geoip.lookup("8.8.8.8")
+    .then(console.log)
+    .catch(console.error);
+&lt;/script&gt;</code></pre>
+          <p>The same file is available on <a href="https://unpkg.com/where-is-ip@latest/dist/index.global.js">UNPKG</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="api">
+      <h2>API</h2>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Lookup methods">
+        <table>
+          <thead><tr><th scope="col">Method</th><th scope="col">Looks up</th></tr></thead>
+          <tbody>
+            <tr><td><code>geoip.lookup(ip)</code></td><td>The specified public IPv4 or IPv6 address.</td></tr>
+            <tr><td><code>geoip.lookup()</code></td><td>The visitor's public IP in a browser or the server's outgoing IP in Node.js.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Both methods return a <code>Promise&lt;GeoIpResult&gt;</code>. The promise rejects if the IP is invalid or every eligible provider fails.</p>
+      <h3>Result</h3>
+      <pre tabindex="0"><code>interface GeoIpResult {
+  ip: string;
+  countryCode: string;
+  countryName: string | null;
+  region: string | null;
+  city: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  provider: string;
+}</code></pre>
+      <p>Fields marked <code>| null</code> are <code>null</code> when the provider has no usable data for them.</p>
+    </section>
+
+    <section id="providers">
+      <h2>Providers</h2>
+      <p>Each provider attempt has a 2-second timeout. Cloudflare Trace is the final fallback for <code>lookup()</code>.</p>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Provider support">
+        <table>
+          <thead>
+            <tr><th scope="col">Provider</th><th scope="col">ID</th><th scope="col">Specified IP</th><th scope="col">Caller IP</th><th scope="col">Browser</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><a href="https://country.is/">Country.is</a></td><td><code>country-is</code></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td><a href="https://freeipapi.com/">FreeIPAPI</a></td><td><code>freeipapi</code></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td><a href="https://www.geojs.io/">GeoJS</a></td><td><code>geojs</code></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td><a href="https://ip-info.com/">IP Info</a></td><td><code>ip-info</code></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td><a href="https://www.ip2location.io/">IP2Location.io</a></td><td><code>ip2location</code></td><td>Yes</td><td>Yes</td><td>No</td></tr>
+            <tr><td><a href="https://ipinfo.io/">IPinfo</a></td><td><code>ipinfo</code></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td><a href="https://ipwhois.io/">IPWhois</a></td><td><code>ipwhois</code></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td><a href="https://www.cloudflare.com/">Cloudflare Trace</a></td><td><code>cloudflare</code></td><td>No</td><td>Yes</td><td>Yes</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <a href="https://www.npmjs.com/package/where-is-ip">npm</a>
+      <a href="https://github.com/omyto/where-is-ip/blob/main/LICENSE">MIT license</a>
+    </footer>
+  </main>
+</body>
+</html>
