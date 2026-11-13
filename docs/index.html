@@ -37,9 +37,20 @@
     .intro { padding-block: clamp(2.5rem, 8vw, 5rem) 2.5rem; }
     .intro p { margin-top: 1rem; font-size: 1.15rem; }
     section { border-top: 1px solid var(--line); padding-block: 2.25rem; }
-    section > :not(:first-child), .example > :not(:first-child) { margin-top: .85rem; }
+    section > :not(:first-child) { margin-top: .85rem; }
     .examples { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
-    .example { min-width: 0; }
+    .example {
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: .85rem;
+      min-width: 0;
+    }
+    .example-code {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: .65rem;
+      background: var(--panel);
+    }
     code { font-family: "IBM Plex Mono", ui-monospace, monospace; color: var(--accent); }
     pre {
       margin: 0;
@@ -51,12 +62,25 @@
       font-size: .875rem;
     }
     pre code { color: var(--ink); }
+    .example-code pre {
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .example-code pre + pre { border-top: 1px solid var(--line); }
     .table-scroll { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; text-align: left; }
     th, td { padding: .65rem .85rem; border-bottom: 1px solid var(--line); }
     th { background: var(--panel); }
     td { color: var(--muted); }
     footer { border-top: 1px solid var(--line); padding-block: 1.5rem 2.5rem; }
+
+    @media (min-width: 44.001rem) {
+      .examples { row-gap: .85rem; }
+      .example { grid-row: span 4; grid-template-rows: subgrid; }
+    }
 
     @media (max-width: 44rem) {
       .examples { grid-template-columns: 1fr; }
@@ -88,22 +112,26 @@
         <div class="example">
           <h3>Install with npm</h3>
           <p>Use with Node.js 18 or later, or with a browser bundler.</p>
-          <pre tabindex="0"><code>npm install where-is-ip</code></pre>
-          <pre tabindex="0"><code>import { geoip } from "where-is-ip";
+          <div class="example-code">
+            <pre tabindex="0"><code>npm install where-is-ip</code></pre>
+            <pre tabindex="0"><code>import { geoip } from "where-is-ip";
 
 const location = await geoip.lookup("8.8.8.8");
 const currentLocation = await geoip.lookup();</code></pre>
+          </div>
           <p><small>* For CommonJS, use <code>const { geoip } = require("where-is-ip")</code>.</small></p>
         </div>
         <div class="example">
           <h3>Use in the browser via CDN</h3>
           <p>Add these scripts to an HTML page.</p>
-          <pre tabindex="0"><code>&lt;script src="https://cdn.jsdelivr.net/npm/where-is-ip@latest/dist/index.global.js"&gt;&lt;/script&gt;
+          <div class="example-code">
+            <pre tabindex="0"><code>&lt;script src="https://cdn.jsdelivr.net/npm/where-is-ip@latest/dist/index.global.js"&gt;&lt;/script&gt;
 &lt;script&gt;
   geoip.lookup("8.8.8.8")
     .then(console.log)
     .catch(console.error);
 &lt;/script&gt;</code></pre>
+          </div>
           <p><small>* The same file is available on <a href="https://unpkg.com/where-is-ip@latest/dist/index.global.js">UNPKG</a>.</small></p>
         </div>
       </div>
