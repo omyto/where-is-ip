@@ -255,6 +255,8 @@ const currentLocation = await geoip.lookup();</code></pre>
       } catch (error) {
         if (error instanceof TypeError) {
           lookupStatus.textContent = "Enter a valid IPv4 or IPv6 address.";
+        } else if (error instanceof RangeError) {
+          lookupStatus.textContent = error.message;
         } else {
           console.error(error);
           lookupStatus.textContent = "Could not look up this IP. Try again in a moment.";

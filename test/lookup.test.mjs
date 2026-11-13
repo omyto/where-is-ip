@@ -60,6 +60,35 @@ test("looks up a specified IP and the caller's IP", async () => {
   assert.deepEqual(requests, [`https://ipwho.is/${ip}`, "https://ipwho.is/"]);
 });
 
+test("rejects private IPs before contacting providers", async () => {
+  const { geoip, requests } = mockLookup(ipwhoisResult);
+
+  for (const address of [
+    "10.0.0.1",
+    "172.16.0.1",
+    "172.31.255.255",
+    "192.168.1.2",
+    "FC00::1",
+    "fd12:3456::1",
+    "::ffff:192.168.1.2",
+    "0:0:0:0:0:ffff:c0a8:102",
+  ]) {
+    await assert.rejects(geoip.lookup(address), {
+      name: "RangeError",
+      message: `${address} is not a public IP address and cannot be geolocated.`,
+    });
+  }
+  assert.deepEqual(requests, []);
+});
+
+test("accepts addresses outside the private ranges", async () => {
+  const { geoip } = mockLookup(ipwhoisResult);
+
+  for (const address of ["172.15.0.1", "172.32.0.1", "2001:4860::8888", "::ffff:8.8.8.8"]) {
+    assert.equal((await geoip.lookup(address)).ip, address);
+  }
+});
+
 test("falls back after a server error and tries the first provider on the next lookup", async () => {
   let attempts = 0;
   const { geoip } = mockLookup(url => {
