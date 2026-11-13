@@ -1,10 +1,15 @@
-import { copyFile } from "node:fs/promises";
+import { copyFile, readFile } from "node:fs/promises";
 import { build } from "esbuild";
+
+const { name, version, license } = JSON.parse(
+  await readFile(new URL("../package.json", import.meta.url), "utf8"),
+);
 
 const options = {
   entryPoints: ["src/index.ts"],
   bundle: true,
   target: "es2022",
+  banner: { js: `/*! ${name} v${version} | ${license} */` },
 };
 
 await Promise.all([
