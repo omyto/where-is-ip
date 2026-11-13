@@ -99,6 +99,8 @@
     th, td { padding: .65rem .85rem; border-bottom: 1px solid var(--line); }
     th { background: var(--panel); }
     td { color: var(--muted); }
+    #providers :is(th, td):nth-child(n + 3) { text-align: center; }
+    .support-yes { color: var(--accent); font-weight: 700; }
     footer { border-top: 1px solid var(--line); padding-block: 1.5rem 2.5rem; }
 
     @media (min-width: 44.001rem) {
@@ -213,14 +215,14 @@ const currentLocation = await geoip.lookup();</code></pre>
             <tr><th scope="col">Provider</th><th scope="col">ID</th><th scope="col">Specified IP</th><th scope="col">Caller IP</th><th scope="col">Browser</th></tr>
           </thead>
           <tbody>
-            <tr><td><a href="https://country.is/">Country.is</a></td><td><code>country-is</code></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-            <tr><td><a href="https://freeipapi.com/">FreeIPAPI</a></td><td><code>freeipapi</code></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-            <tr><td><a href="https://www.geojs.io/">GeoJS</a></td><td><code>geojs</code></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-            <tr><td><a href="https://ip-info.com/">IP Info</a></td><td><code>ip-info</code></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-            <tr><td><a href="https://www.ip2location.io/">IP2Location.io</a></td><td><code>ip2location</code></td><td>Yes</td><td>Yes</td><td>No</td></tr>
-            <tr><td><a href="https://ipinfo.io/">IPinfo</a></td><td><code>ipinfo</code></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-            <tr><td><a href="https://ipwhois.io/">IPWhois</a></td><td><code>ipwhois</code></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-            <tr><td><a href="https://www.cloudflare.com/">Cloudflare Trace</a></td><td><code>cloudflare</code></td><td>No</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td><a href="https://country.is/">Country.is</a></td><td><code>country-is</code></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td></tr>
+            <tr><td><a href="https://freeipapi.com/">FreeIPAPI</a></td><td><code>freeipapi</code></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td></tr>
+            <tr><td><a href="https://www.geojs.io/">GeoJS</a></td><td><code>geojs</code></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td></tr>
+            <tr><td><a href="https://ip-info.com/">IP Info</a></td><td><code>ip-info</code></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td></tr>
+            <tr><td><a href="https://www.ip2location.io/">IP2Location.io</a></td><td><code>ip2location</code></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td><td><span role="img" aria-label="No">—</span></td></tr>
+            <tr><td><a href="https://ipinfo.io/">IPinfo</a></td><td><code>ipinfo</code></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td></tr>
+            <tr><td><a href="https://ipwhois.io/">IPWhois</a></td><td><code>ipwhois</code></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td></tr>
+            <tr><td><a href="https://www.cloudflare.com/">Cloudflare Trace</a></td><td><code>cloudflare</code></td><td><span role="img" aria-label="No">—</span></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td><td><span class="support-yes" role="img" aria-label="Yes">✓</span></td></tr>
           </tbody>
         </table>
       </div>
