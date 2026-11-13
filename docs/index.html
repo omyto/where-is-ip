@@ -253,9 +253,12 @@ const currentLocation = await geoip.lookup();</code></pre>
         result.hidden = false;
         lookupStatus.textContent = "Lookup complete.";
       } catch (error) {
-        lookupStatus.textContent = error instanceof TypeError
-          ? "Enter a valid IPv4 or IPv6 address."
-          : "Could not look up this IP. Try again in a moment.";
+        if (error instanceof TypeError) {
+          lookupStatus.textContent = "Enter a valid IPv4 or IPv6 address.";
+        } else {
+          console.error(error);
+          lookupStatus.textContent = "Could not look up this IP. Try again in a moment.";
+        }
       } finally {
         button.disabled = false;
       }
