@@ -1,6 +1,7 @@
 # where-is-ip
 
-Look up public IPv4 and IPv6 locations with automatic fallback and no API key.
+Look up public IPv4 and IPv6 locations with automatic fallback and no API key.  
+[Live Demo](https://omyto.github.io/where-is-ip/#demo)
 
 ## Usage
 
