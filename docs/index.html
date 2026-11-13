@@ -20,6 +20,13 @@
     * { box-sizing: border-box; }
     body { margin: 0; background: var(--page); color: var(--ink); }
     a { color: var(--accent); text-underline-offset: .2em; }
+    a[href^="https://"]::after {
+      content: "↗";
+      content: "↗" / "";
+      display: inline-block;
+      margin-inline-start: .25em;
+      font-size: .85em;
+    }
     :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
     .wrap { width: min(100% - 2.5rem, 64rem); margin-inline: auto; }
     .top { border-bottom: 1px solid var(--line); }
@@ -95,6 +102,7 @@
         <a href="#usage">Usage</a>
         <a href="#api">API</a>
         <a href="#providers">Providers</a>
+        <a href="https://www.npmjs.com/package/where-is-ip">npm</a>
         <a href="https://github.com/omyto/where-is-ip">GitHub</a>
       </nav>
     </div>
@@ -187,7 +195,6 @@ const currentLocation = await geoip.lookup();</code></pre>
     </section>
 
     <footer>
-      <a href="https://www.npmjs.com/package/where-is-ip">npm</a>
       <a href="https://github.com/omyto/where-is-ip/blob/main/LICENSE">MIT license</a>
     </footer>
   </main>
