@@ -1,6 +1,6 @@
 {
   "name": "where-is-ip",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Look up IP locations with native fetch and automatic fallback between keyless providers.",
   "homepage": "https://omyto.github.io/where-is-ip/",
   "license": "MIT",
