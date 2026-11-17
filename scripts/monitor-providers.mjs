@@ -20,6 +20,9 @@ function redactBody(body, mode) {
       const address = candidate.replace(/^\.+|\.+$/g, "");
       return isIP(address) ? candidate.replace(address, "[redacted]") : candidate;
     });
+    body = body.replace(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g, address => {
+      return isIP(address) === 4 ? "[redacted]" : address;
+    });
   }
   return body;
 }
@@ -150,7 +153,10 @@ export function renderSummary(report) {
       if (check.recovered) notes.push(`${MODES[mode]} recovered`);
     }
     const retryAt = Math.max(checks.caller.retryAt ?? 0, checks.specified?.retryAt ?? 0);
-    if (retryAt) notes.push(`Retry after ${new Date(retryAt).toISOString()}`);
+    if (retryAt) {
+      const retryDate = new Date(retryAt);
+      notes.push(Number.isNaN(retryDate.getTime()) ? "Retry date out of range" : `Retry after ${retryDate.toISOString()}`);
+    }
     lines.push(`| \`${provider}\` | ${formatCheck(checks.caller)} | ${formatCheck(checks.specified)} | ${notes.join(" · ")} |`);
   }
   return lines.join("\n") + "\n";

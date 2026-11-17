@@ -1,0 +1,70 @@
+name: Provider monitor
+
+on:
+  schedule:
+    - cron: "17 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  issues: write
+
+concurrency:
+  group: provider-monitor
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  monitor:
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - run: npm ci
+
+      - name: Restore the latest report
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          run_id=$(gh api --paginate --slurp --method GET \
+            "repos/$GITHUB_REPOSITORY/actions/artifacts" \
+            -f name=provider-monitor-status -f per_page=100 |
+            jq -r --arg branch "$GITHUB_REF_NAME" --arg current "$GITHUB_RUN_ID" '
+              [.[].artifacts[] | select(.expired == false)
+              | select(.workflow_run.head_branch == $branch)
+              | select((.workflow_run.id | tostring) != $current)]
+              | sort_by(.created_at, .id) | last | .workflow_run.id // empty')
+          if [[ -n "$run_id" ]]; then
+            gh run download "$run_id" --name provider-monitor-status --dir "$RUNNER_TEMP/provider-monitor"
+          fi
+
+      - name: Check providers and write the summary
+        run: |
+          previous=()
+          if [[ -f "$RUNNER_TEMP/provider-monitor/status.json" ]]; then
+            previous+=("$RUNNER_TEMP/provider-monitor/status.json")
+          fi
+          npm run --silent monitor:providers -- dist/status.json "${previous[@]}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Save the report
+        uses: actions/upload-artifact@v7
+        with:
+          name: provider-monitor-status
+          path: dist/status.json
+          if-no-files-found: error
+          overwrite: true
+
+      - name: Report failures in GitHub issues
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/provider-monitor-issues.mjs dist/status.json >> "$GITHUB_STEP_SUMMARY"

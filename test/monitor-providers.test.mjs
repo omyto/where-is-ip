@@ -19,7 +19,7 @@ test("checks both lookup modes directly and keeps the failing response without e
   const urls = [];
   const response = {
     ip: "2001:4860::8888",
-    message: "Address 192.0.2.1 is missing geolocation",
+    message: "Address 192.0.2.1:443 is missing geolocation",
     token: "secret",
   };
   const report = await monitorProviders({}, async input => {
@@ -41,7 +41,7 @@ test("checks both lookup modes directly and keeps the failing response without e
   assert.deepEqual(JSON.parse(report.providers.ipwhois.caller.response.body), {
     success: true,
     ip: "[redacted]",
-    message: "Address [redacted] is missing geolocation",
+    message: "Address [redacted]:443 is missing geolocation",
     token: "[redacted]",
   });
   assert.equal(report.providers.ipwhois.specified.status, "ok");
