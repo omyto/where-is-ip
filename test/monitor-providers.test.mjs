@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { PassThrough } from "node:stream";
 import { test } from "node:test";
 import { build } from "esbuild";
 
@@ -77,4 +78,35 @@ test("respects the saved retry time and counts failures by lookup mode", async (
   const third = await monitorProviders(second, fetch);
   assert.equal(third.providers["ip-info"].specified.consecutiveFailures, 0);
   assert.match(renderSummary(third), /Specified IP recovered/);
+});
+
+test("prints an aligned terminal table and keeps Markdown for redirected output", async () => {
+  const { printReport } = await loadMonitor();
+  const report = {
+    checkedAt: "2026-11-17T00:17:00.000Z",
+    providers: {
+      "ip-info": {
+        caller: { status: "ok", latencyMs: 142 },
+        specified: { status: "error", error: "HTTP 503", consecutiveFailures: 3 },
+      },
+    },
+  };
+
+  for (const isTTY of [true, false]) {
+    const stdout = new PassThrough();
+    stdout.isTTY = isTTY;
+    printReport(report, stdout);
+    const output = stdout.read().toString();
+
+    assert.match(output, /Specified IP failed 3 runs in a row/);
+    if (isTTY) {
+      assert.match(output, /┌.*┐/);
+      assert.match(output, /│.*ip-info.*✓ 142 ms.*✗ HTTP 503.*│/);
+      assert.doesNotMatch(output, /^## Provider monitor/m);
+    } else {
+      assert.match(output, /^## Provider monitor/m);
+      assert.match(output, /\| `ip-info` \| ✓ 142 ms \| ✗ HTTP 503 \|/);
+      assert.doesNotMatch(output, /┌/);
+    }
+  }
 });

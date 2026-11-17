@@ -1,3 +1,4 @@
+import { Console } from "node:console";
 import { readFile, writeFile } from "node:fs/promises";
 import { isIP } from "node:net";
 import { pathToFileURL } from "node:url";
@@ -7,6 +8,7 @@ import { ProviderRateLimitError } from "../src/providers/shared.js";
 const PROBE_IP = "8.8.8.8";
 const MAX_RESPONSE_BYTES = 1024 * 1024;
 const MODES = { caller: "Caller IP", specified: "Specified IP" };
+const COLUMNS = ["Provider", MODES.caller, `${MODES.specified} (${PROBE_IP})`, "Notes"];
 
 function redactBody(body, mode) {
   const sensitiveKey = /^(?:authorization|cookie|set[_-]?cookie|api[_-]?key|.*token|password|secret)$/i;
@@ -135,16 +137,8 @@ function formatCheck(check) {
   }
 }
 
-export function renderSummary(report) {
-  const lines = [
-    "## Provider monitor",
-    "",
-    `Checked at ${report.checkedAt} · Server-side checks`,
-    "",
-    "| Provider | Caller IP | Specified IP (8.8.8.8) | Notes |",
-    "| --- | --- | --- | --- |",
-  ];
-  for (const [provider, checks] of Object.entries(report.providers)) {
+function reportRows(report) {
+  return Object.entries(report.providers).map(([provider, checks]) => {
     const notes = [];
     for (const [mode, check] of Object.entries(checks)) {
       if (check.status === "error" && check.consecutiveFailures > 1) {
@@ -157,9 +151,41 @@ export function renderSummary(report) {
       const retryDate = new Date(retryAt);
       notes.push(Number.isNaN(retryDate.getTime()) ? "Retry date out of range" : `Retry after ${retryDate.toISOString()}`);
     }
-    lines.push(`| \`${provider}\` | ${formatCheck(checks.caller)} | ${formatCheck(checks.specified)} | ${notes.join(" · ")} |`);
+    return [provider, formatCheck(checks.caller), formatCheck(checks.specified), notes.join(" · ")];
+  });
+}
+
+function reportCaption(report) {
+  return `Checked at ${report.checkedAt} · Server-side checks`;
+}
+
+export function renderSummary(report) {
+  const lines = [
+    "## Provider monitor",
+    "",
+    reportCaption(report),
+    "",
+    `| ${COLUMNS.join(" | ")} |`,
+    "| --- | --- | --- | --- |",
+  ];
+  for (const [provider, ...cells] of reportRows(report)) {
+    lines.push(`| \`${provider}\` | ${cells.join(" | ")} |`);
   }
   return lines.join("\n") + "\n";
+}
+
+export function printReport(report, stdout = process.stdout) {
+  if (!stdout.isTTY) {
+    stdout.write(renderSummary(report));
+    return;
+  }
+
+  const terminal = new Console({ stdout, colorMode: false });
+  terminal.log("Provider monitor");
+  terminal.log(reportCaption(report));
+  terminal.table(reportRows(report).map(cells =>
+    Object.fromEntries(COLUMNS.map((column, index) => [column, cells[index]])),
+  ));
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
@@ -167,5 +193,5 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const previous = previousFile ? JSON.parse(await readFile(previousFile, "utf8")) : {};
   const report = await monitorProviders(previous);
   await writeFile(output, JSON.stringify(report, null, 2) + "\n");
-  process.stdout.write(renderSummary(report));
+  printReport(report);
 }
