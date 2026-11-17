@@ -37,6 +37,7 @@
   "scripts": {
     "build": "tsc && node scripts/build.mjs",
     "test": "npm run build && node --test",
+    "monitor:providers": "esbuild scripts/monitor-providers.mjs --bundle --platform=node --format=esm --outfile=dist/provider-monitor.mjs && node dist/provider-monitor.mjs",
     "prepack": "npm run build"
   },
   "keywords": ["ip-geolocation", "geoip", "ip-lookup", "ip-location", "ipv4", "ipv6"],
