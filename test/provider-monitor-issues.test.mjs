@@ -3,6 +3,7 @@ import { test } from "node:test";
 
 const report = {
   checkedAt: "2026-11-17T00:00:00.000Z",
+  probeIp: "1.1.1.1",
   providers: {
     "ip-info": {
       caller: { status: "error", error: "Lookup failed", consecutiveFailures: 2 },
@@ -42,6 +43,7 @@ for (const state of ["open", "closed"]) {
     assert.equal(writes[0].number, state === "open" ? 42 : undefined);
     assert.match(writes[0].body, /Caller IP/);
     assert.match(writes[0].body, /Specified IP/);
+    assert.match(writes[0].body, /Specified IP \(1\.1\.1\.1\)/);
     assert.match(writes[0].body, /No HTTP response received/);
     assert.match(writes[0].body, /\nService unavailable\n/);
     assert.ok(writes[0].body.includes(runUrl));

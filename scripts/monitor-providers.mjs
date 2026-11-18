@@ -5,10 +5,10 @@ import { pathToFileURL } from "node:url";
 import { providers } from "../src/providers/index.js";
 import { ProviderRateLimitError } from "../src/providers/shared.js";
 
-const PROBE_IP = "8.8.8.8";
+const PROBE_IPS = ["8.8.8.8", "1.1.1.1", "9.9.9.9", "208.67.222.222"];
 const MAX_RESPONSE_BYTES = 1024 * 1024;
 const MODES = { caller: "Caller IP", specified: "Specified IP" };
-const COLUMNS = ["Provider", MODES.caller, `${MODES.specified} (${PROBE_IP})`, "Notes"];
+const COLUMNS = ["Provider", MODES.caller, MODES.specified, "Notes"];
 
 function redactBody(body, mode) {
   const sensitiveKey = /^(?:authorization|cookie|set[_-]?cookie|api[_-]?key|.*token|password|secret)$/i;
@@ -53,7 +53,7 @@ async function readBody(response) {
   }
 }
 
-async function probe(provider, mode, previous, fetch, now) {
+async function probe(provider, mode, probeIp, previous, fetch, now) {
   const savedFetch = globalThis.fetch;
   const started = now();
   let response;
@@ -79,7 +79,7 @@ async function probe(provider, mode, previous, fetch, now) {
   };
 
   try {
-    const result = mode === "caller" ? await provider.lookup() : await provider.lookup(PROBE_IP);
+    const result = mode === "caller" ? await provider.lookup() : await provider.lookup(probeIp);
     if (result.countryCode && !response?.truncated) {
       return {
         status: "ok",
@@ -108,8 +108,9 @@ async function probe(provider, mode, previous, fetch, now) {
   };
 }
 
-export async function monitorProviders(previous = {}, fetch = globalThis.fetch, now = Date.now) {
+export async function monitorProviders(previous = {}, fetch = globalThis.fetch, now = Date.now, random = Math.random) {
   const checkedAt = new Date(now()).toISOString();
+  const probeIp = PROBE_IPS[Math.floor(random() * PROBE_IPS.length)];
   const results = {};
   for (const provider of providers) {
     const prior = previous.providers?.[provider.name];
@@ -119,12 +120,12 @@ export async function monitorProviders(previous = {}, fetch = globalThis.fetch, 
       const last = prior?.[mode];
       checks[mode] = retryAt > now()
         ? { status: "skipped", retryAt, consecutiveFailures: last?.consecutiveFailures ?? 0 }
-        : await probe(provider, mode, last, fetch, now);
+        : await probe(provider, mode, probeIp, last, fetch, now);
       retryAt = checks[mode].retryAt ?? 0;
     }
     results[provider.name] = checks;
   }
-  return { checkedAt, providers: results };
+  return { checkedAt, probeIp, providers: results };
 }
 
 function formatCheck(check) {
@@ -156,7 +157,7 @@ function reportRows(report) {
 }
 
 function reportCaption(report) {
-  return `Checked at ${report.checkedAt} · Server-side checks`;
+  return `Checked at ${report.checkedAt}`;
 }
 
 export function renderSummary(report) {
@@ -171,6 +172,7 @@ export function renderSummary(report) {
   for (const [provider, ...cells] of reportRows(report)) {
     lines.push(`| \`${provider}\` | ${cells.join(" | ")} |`);
   }
+  lines.push("", `Specified IP checks used \`${report.probeIp}\`.`);
   return lines.join("\n") + "\n";
 }
 
@@ -186,6 +188,7 @@ export function printReport(report, stdout = process.stdout) {
   terminal.table(reportRows(report).map(cells =>
     Object.fromEntries(COLUMNS.map((column, index) => [column, cells[index]])),
   ));
+  terminal.log(`Specified IP checks used ${report.probeIp}.`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

@@ -32,7 +32,7 @@ test("checks both lookup modes directly and keeps the failing response without e
     if (url.hostname === "ipwho.is") return Response.json({ success: true, ...response });
     if (url.hostname === "www.cloudflare.com") return new Response("ip=8.8.4.4\nloc=US\n");
     return new Response("Service unavailable", { status: 503 });
-  });
+  }, Date.now, () => 0);
 
   assert.equal(urls.length, 15);
   assert.equal(new Set(urls.map(url => url.hostname)).size, 8);
@@ -47,7 +47,9 @@ test("checks both lookup modes directly and keeps the failing response without e
   });
   assert.equal(report.providers.ipwhois.specified.status, "ok");
   assert.equal(report.providers.cloudflare.specified, undefined);
-  assert.match(renderSummary(report), /\| Provider \| Caller IP \| Specified IP \(8\.8\.8\.8\) \| Notes \|/);
+  assert.match(renderSummary(report), /\| Provider \| Caller IP \| Specified IP \| Notes \|/);
+  assert.match(renderSummary(report), /Specified IP checks used `8\.8\.8\.8`/);
+  assert.doesNotMatch(renderSummary(report), /Server-side checks/);
 });
 
 test("respects the saved retry time and counts failures by lookup mode", async () => {
@@ -84,6 +86,7 @@ test("prints an aligned terminal table and keeps Markdown for redirected output"
   const { printReport } = await loadMonitor();
   const report = {
     checkedAt: "2026-11-17T00:17:00.000Z",
+    probeIp: "1.1.1.1",
     providers: {
       "ip-info": {
         caller: { status: "ok", latencyMs: 142 },
@@ -99,6 +102,7 @@ test("prints an aligned terminal table and keeps Markdown for redirected output"
     const output = stdout.read().toString();
 
     assert.match(output, /Specified IP failed 3 runs in a row/);
+    assert.match(output, /Specified IP checks used .*1\.1\.1\.1/);
     if (isTTY) {
       assert.match(output, /┌.*┐/);
       assert.match(output, /│.*ip-info.*✓ 142 ms.*✗ HTTP 503.*│/);
@@ -108,5 +112,25 @@ test("prints an aligned terminal table and keeps Markdown for redirected output"
       assert.match(output, /\| `ip-info` \| ✓ 142 ms \| ✗ HTTP 503 \|/);
       assert.doesNotMatch(output, /┌/);
     }
+  }
+});
+
+test("selects one probe IP for the whole run and records it in the report", async () => {
+  const { monitorProviders } = await loadMonitor();
+  for (const [random, expected] of [[0, "8.8.8.8"], [0.25, "1.1.1.1"], [0.5, "9.9.9.9"], [0.75, "208.67.222.222"]]) {
+    const targets = [];
+    let selections = 0;
+    const report = await monitorProviders({}, async input => {
+      const url = new URL(input);
+      if (url.hostname !== "www.cloudflare.com") {
+        const target = url.searchParams.get("ip") ??
+          url.pathname.match(/(?:^|\/)(\d+\.\d+\.\d+\.\d+)(?:\.json)?(?:\/json)?$/)?.[1];
+        if (target) targets.push(target);
+      }
+      return new Response(null, { status: 503 });
+    }, Date.now, () => { selections++; return random; });
+    assert.equal(report.probeIp, expected);
+    assert.equal(selections, 1);
+    assert.deepEqual(targets, Array(7).fill(expected));
   }
 });

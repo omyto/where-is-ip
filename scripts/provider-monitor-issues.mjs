@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 
 const LABEL = "provider-monitor";
-const MODES = { caller: "Caller IP", specified: "Specified IP (8.8.8.8)" };
+const MODES = { caller: "Caller IP", specified: "Specified IP" };
 
 function formatResponse(response) {
   if (!response) return "No HTTP response received.";
@@ -44,7 +44,7 @@ export async function publishIssues(report, runUrl, api) {
     const candidate = openIssues.find(issue => !issue.pull_request && issue.body?.includes(marker));
     const current = candidate && await api.getIssue(candidate.number);
     const sections = failed.map(([mode, check]) => [
-      `### ${MODES[mode]}`,
+      `### ${MODES[mode]}${mode === "specified" ? ` (${report.probeIp})` : ""}`,
       "",
       `${check.error} · ${check.consecutiveFailures} consecutive failure(s)`,
       "",
