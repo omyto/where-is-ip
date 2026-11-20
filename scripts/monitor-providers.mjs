@@ -1,11 +1,15 @@
 import { Console } from "node:console";
+import { resolve4 } from "node:dns/promises";
 import { readFile, writeFile } from "node:fs/promises";
 import { isIP } from "node:net";
 import { pathToFileURL } from "node:url";
 import { providers } from "../src/providers/index.js";
 import { ProviderRateLimitError } from "../src/providers/shared.js";
 
-const PROBE_IPS = ["8.8.8.8", "208.67.222.222"];
+const PROBE_TARGETS = [
+  "8.8.8.8", "208.67.222.222",
+  "google.com", "cloudflare.com", "apple.com", "microsoft.com", "amazon.com", "facebook.com",
+];
 const MAX_RESPONSE_BYTES = 1024 * 1024;
 const MODES = { caller: "Caller IP", specified: "Specified IP" };
 const COLUMNS = ["Provider", MODES.caller, MODES.specified, "Notes"];
@@ -108,9 +112,11 @@ async function probe(provider, mode, probeIp, previous, fetch, now) {
   };
 }
 
-export async function monitorProviders(previous = {}, fetch = globalThis.fetch, now = Date.now, random = Math.random) {
+export async function monitorProviders(previous = {}, fetch = globalThis.fetch, now = Date.now, random = Math.random, resolve = resolve4) {
   const checkedAt = new Date(now()).toISOString();
-  const probeIp = PROBE_IPS[Math.floor(random() * PROBE_IPS.length)];
+  const probeTarget = PROBE_TARGETS[Math.floor(random() * PROBE_TARGETS.length)];
+  const probeIp = isIP(probeTarget) ? probeTarget : (await resolve(probeTarget))[0];
+  if (!probeIp) throw new Error(`No IPv4 address found for ${probeTarget}`);
   const results = {};
   for (const provider of providers) {
     const prior = previous.providers?.[provider.name];
@@ -125,7 +131,7 @@ export async function monitorProviders(previous = {}, fetch = globalThis.fetch, 
     }
     results[provider.name] = checks;
   }
-  return { checkedAt, probeIp, providers: results };
+  return { checkedAt, probeTarget, probeIp, providers: results };
 }
 
 function formatCheck(check) {
@@ -160,6 +166,12 @@ function reportCaption(report) {
   return `Checked at ${report.checkedAt}`;
 }
 
+function formatProbeTarget(report) {
+  return report.probeTarget && report.probeTarget !== report.probeIp
+    ? `${report.probeTarget} → ${report.probeIp}`
+    : report.probeIp;
+}
+
 export function renderSummary(report) {
   const lines = [
     "## Provider monitor",
@@ -172,7 +184,7 @@ export function renderSummary(report) {
   for (const [provider, ...cells] of reportRows(report)) {
     lines.push(`| \`${provider}\` | ${cells.join(" | ")} |`);
   }
-  lines.push("", `Specified IP checks used \`${report.probeIp}\`.`);
+  lines.push("", `Specified IP checks used \`${formatProbeTarget(report)}\`.`);
   return lines.join("\n") + "\n";
 }
 
@@ -188,7 +200,7 @@ export function printReport(report, stdout = process.stdout) {
   terminal.table(reportRows(report).map(cells =>
     Object.fromEntries(COLUMNS.map((column, index) => [column, cells[index]])),
   ));
-  terminal.log(`Specified IP checks used ${report.probeIp}.`);
+  terminal.log(`Specified IP checks used ${formatProbeTarget(report)}.`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

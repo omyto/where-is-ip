@@ -37,6 +37,9 @@ export async function publishIssues(report, runUrl, api) {
   });
   if (!failures.length) return [];
 
+  const probeTarget = report.probeTarget && report.probeTarget !== report.probeIp
+    ? `${report.probeTarget} → ${report.probeIp}`
+    : report.probeIp;
   const openIssues = await api.listOpenIssues();
   const links = [];
   for (const [provider, failed] of failures) {
@@ -44,7 +47,7 @@ export async function publishIssues(report, runUrl, api) {
     const candidate = openIssues.find(issue => !issue.pull_request && issue.body?.includes(marker));
     const current = candidate && await api.getIssue(candidate.number);
     const sections = failed.map(([mode, check]) => [
-      `### ${MODES[mode]}${mode === "specified" ? ` (${report.probeIp})` : ""}`,
+      `### ${MODES[mode]}${mode === "specified" ? ` (${probeTarget})` : ""}`,
       "",
       `${check.error} · ${check.consecutiveFailures} consecutive failure(s)`,
       "",

@@ -68,16 +68,16 @@ test("respects the saved retry time and counts failures by lookup mode", async (
     return new Response(null, { status: 503 });
   };
 
-  const first = await monitorProviders({}, fetch);
+  const first = await monitorProviders({}, fetch, Date.now, () => 0);
   assert.equal(first.providers.ipwhois.caller.status, "rate-limited");
   assert.equal(first.providers.ipwhois.specified.status, "skipped");
   urls.length = 0;
-  const second = await monitorProviders(first, fetch);
+  const second = await monitorProviders(first, fetch, Date.now, () => 0);
   assert.ok(!urls.some(url => url.hostname === "ipwho.is"));
   assert.equal(second.providers["ip-info"].caller.consecutiveFailures, 0);
   assert.equal(second.providers["ip-info"].specified.consecutiveFailures, 2);
   errors = false;
-  const third = await monitorProviders(second, fetch);
+  const third = await monitorProviders(second, fetch, Date.now, () => 0);
   assert.equal(third.providers["ip-info"].specified.consecutiveFailures, 0);
   assert.match(renderSummary(third), /Specified IP recovered/);
 });
@@ -117,9 +117,12 @@ test("prints an aligned terminal table and keeps Markdown for redirected output"
 
 test("selects one probe IP for the whole run and records it in the report", async () => {
   const { monitorProviders } = await loadMonitor();
-  for (const [random, expected] of [[0, "8.8.8.8"], [0.25, "8.8.8.8"], [0.5, "208.67.222.222"], [0.75, "208.67.222.222"]]) {
+  const probes = ["8.8.8.8", "208.67.222.222", "google.com", "cloudflare.com", "apple.com", "microsoft.com", "amazon.com", "facebook.com"];
+  for (const [index, selected] of probes.entries()) {
+    const expected = index < 2 ? selected : "192.0.2.10";
     const targets = [];
     let selections = 0;
+    const resolutions = [];
     const report = await monitorProviders({}, async input => {
       const url = new URL(input);
       if (url.hostname !== "www.cloudflare.com") {
@@ -128,9 +131,42 @@ test("selects one probe IP for the whole run and records it in the report", asyn
         if (target) targets.push(target);
       }
       return new Response(null, { status: 503 });
-    }, Date.now, () => { selections++; return random; });
+    }, Date.now, () => { selections++; return index / probes.length; }, async domain => {
+      resolutions.push(domain);
+      return ["192.0.2.10", "192.0.2.20"];
+    });
+    assert.equal(report.probeTarget, selected);
     assert.equal(report.probeIp, expected);
     assert.equal(selections, 1);
+    assert.deepEqual(resolutions, index < 2 ? [] : [selected]);
     assert.deepEqual(targets, Array(7).fill(expected));
   }
+});
+
+test("reports the domain and resolved IP in Markdown and terminal output", async () => {
+  const { printReport } = await loadMonitor();
+  const report = {
+    checkedAt: "2026-11-20T02:15:00.000Z",
+    probeTarget: "google.com",
+    probeIp: "192.0.2.10",
+    providers: {},
+  };
+  for (const isTTY of [true, false]) {
+    const stdout = new PassThrough();
+    stdout.isTTY = isTTY;
+    printReport(report, stdout);
+    assert.match(stdout.read().toString(), /google\.com → 192\.0\.2\.10/);
+  }
+});
+
+test("fails on DNS errors or empty answers without falling back or calling providers", async () => {
+  const { monitorProviders } = await loadMonitor();
+  const dnsError = Object.assign(new Error("getaddrinfo ENOTFOUND google.com"), { code: "ENOTFOUND" });
+  let requests = 0;
+  const fetch = async () => { requests++; throw new Error("Unexpected provider request"); };
+  await assert.rejects(monitorProviders({}, fetch, Date.now, () => 0.25, async () => {
+    throw dnsError;
+  }), error => error === dnsError);
+  await assert.rejects(monitorProviders({}, fetch, Date.now, () => 0.25, async () => []), /No IPv4 address found for google\.com/);
+  assert.equal(requests, 0);
 });

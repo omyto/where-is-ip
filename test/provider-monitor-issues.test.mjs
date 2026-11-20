@@ -63,3 +63,14 @@ test("keeps large responses in the run artifact instead of exceeding the issue l
   assert.ok(written.length < 60_000);
   assert.match(written, /Full response in the run's `provider-monitor-status` artifact/);
 });
+
+test("includes the selected domain and resolved IP in failure reports", async () => {
+  const { publishIssues } = await import("../scripts/provider-monitor-issues.mjs");
+  const domainReport = { ...report, probeTarget: "google.com", probeIp: "192.0.2.10" };
+  let written;
+  await publishIssues(domainReport, runUrl, {
+    async listOpenIssues() { return []; },
+    async create(title, body) { written = body; return { html_url: "new-issue" }; },
+  });
+  assert.match(written, /Specified IP \(google\.com → 192\.0\.2\.10\)/);
+});
