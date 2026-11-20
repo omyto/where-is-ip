@@ -112,11 +112,28 @@ async function probe(provider, mode, probeIp, previous, fetch, now) {
   };
 }
 
+async function selectProbe(random, resolve) {
+  const targets = [...PROBE_TARGETS];
+  for (let index = targets.length - 1; index > 0; index--) {
+    const other = Math.floor(random() * (index + 1));
+    [targets[index], targets[other]] = [targets[other], targets[index]];
+  }
+
+  for (const probeTarget of targets) {
+    if (isIP(probeTarget)) return { probeTarget, probeIp: probeTarget };
+    try {
+      const [probeIp] = await resolve(probeTarget);
+      if (probeIp) return { probeTarget, probeIp };
+    } catch {
+      // Try the next shuffled target when DNS resolution fails.
+    }
+  }
+  throw new Error("No probe IP available");
+}
+
 export async function monitorProviders(previous = {}, fetch = globalThis.fetch, now = Date.now, random = Math.random, resolve = resolve4) {
   const checkedAt = new Date(now()).toISOString();
-  const probeTarget = PROBE_TARGETS[Math.floor(random() * PROBE_TARGETS.length)];
-  const probeIp = isIP(probeTarget) ? probeTarget : (await resolve(probeTarget))[0];
-  if (!probeIp) throw new Error(`No IPv4 address found for ${probeTarget}`);
+  const { probeTarget, probeIp } = await selectProbe(random, resolve);
   const results = {};
   for (const provider of providers) {
     const prior = previous.providers?.[provider.name];

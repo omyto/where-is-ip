@@ -32,7 +32,7 @@ test("checks both lookup modes directly and keeps the failing response without e
     if (url.hostname === "ipwho.is") return Response.json({ success: true, ...response });
     if (url.hostname === "www.cloudflare.com") return new Response("ip=8.8.4.4\nloc=US\n");
     return new Response("Service unavailable", { status: 503 });
-  }, Date.now, () => 0);
+  }, Date.now, () => 0.999);
 
   assert.equal(urls.length, 15);
   assert.equal(new Set(urls.map(url => url.hostname)).size, 8);
@@ -115,13 +115,13 @@ test("prints an aligned terminal table and keeps Markdown for redirected output"
   }
 });
 
-test("selects one probe IP for the whole run and records it in the report", async () => {
+test("shuffles a fresh probe list for each run and uses one IP for all providers", async () => {
   const { monitorProviders } = await loadMonitor();
   const probes = ["8.8.8.8", "208.67.222.222", "google.com", "cloudflare.com", "apple.com", "microsoft.com", "amazon.com", "facebook.com"];
   for (const [index, selected] of probes.entries()) {
     const expected = index < 2 ? selected : "192.0.2.10";
     const targets = [];
-    let selections = 0;
+    let shuffleIndex = probes.length - 1;
     const resolutions = [];
     const report = await monitorProviders({}, async input => {
       const url = new URL(input);
@@ -131,13 +131,12 @@ test("selects one probe IP for the whole run and records it in the report", asyn
         if (target) targets.push(target);
       }
       return new Response(null, { status: 503 });
-    }, Date.now, () => { selections++; return index / probes.length; }, async domain => {
+    }, Date.now, () => shuffleIndex-- === index ? 0 : 0.999, async domain => {
       resolutions.push(domain);
       return ["192.0.2.10", "192.0.2.20"];
     });
     assert.equal(report.probeTarget, selected);
     assert.equal(report.probeIp, expected);
-    assert.equal(selections, 1);
     assert.deepEqual(resolutions, index < 2 ? [] : [selected]);
     assert.deepEqual(targets, Array(7).fill(expected));
   }
@@ -159,14 +158,37 @@ test("reports the domain and resolved IP in Markdown and terminal output", async
   }
 });
 
-test("fails on DNS errors or empty answers without falling back or calling providers", async () => {
+test("tries the next shuffled probe after DNS errors or empty answers", async () => {
   const { monitorProviders } = await loadMonitor();
-  const dnsError = Object.assign(new Error("getaddrinfo ENOTFOUND google.com"), { code: "ENOTFOUND" });
+  const draws = [0, 0.2, 0.4, 0.8, 0.999, 0.999, 0.999];
+  const resolutions = [];
   let requests = 0;
-  const fetch = async () => { requests++; throw new Error("Unexpected provider request"); };
-  await assert.rejects(monitorProviders({}, fetch, Date.now, () => 0.25, async () => {
-    throw dnsError;
-  }), error => error === dnsError);
-  await assert.rejects(monitorProviders({}, fetch, Date.now, () => 0.25, async () => []), /No IPv4 address found for google\.com/);
-  assert.equal(requests, 0);
+  const report = await monitorProviders({}, async () => {
+    requests++;
+    return new Response(null, { status: 503 });
+  }, Date.now, () => draws.shift(), async domain => {
+    resolutions.push(domain);
+    assert.equal(requests, 0);
+    if (resolutions.length === 1) throw new Error("DNS lookup failed");
+    if (resolutions.length === 2) return [];
+    return ["192.0.2.10"];
+  });
+  assert.deepEqual(resolutions, ["facebook.com", "amazon.com", "microsoft.com"]);
+  assert.equal(report.probeTarget, "microsoft.com");
+  assert.equal(report.probeIp, "192.0.2.10");
+  assert.equal(requests, 15);
+});
+
+test("uses the next literal IP when all preceding domains fail to resolve", async () => {
+  const { monitorProviders } = await loadMonitor();
+  const draws = [0, 0.2, 0.4, 0.8, 0.999, 0.999, 0.999];
+  const resolutions = [];
+  const report = await monitorProviders({}, async () => new Response(null, { status: 503 }), Date.now,
+    () => draws.shift(), async domain => {
+      resolutions.push(domain);
+      throw new Error("DNS lookup failed");
+    });
+  assert.deepEqual(resolutions, ["facebook.com", "amazon.com", "microsoft.com", "cloudflare.com", "apple.com", "google.com"]);
+  assert.equal(report.probeTarget, "208.67.222.222");
+  assert.equal(report.probeIp, "208.67.222.222");
 });
