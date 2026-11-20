@@ -5,7 +5,7 @@ import { pathToFileURL } from "node:url";
 import { providers } from "../src/providers/index.js";
 import { ProviderRateLimitError } from "../src/providers/shared.js";
 
-const PROBE_IPS = ["8.8.8.8", "1.1.1.1", "9.9.9.9", "208.67.222.222"];
+const PROBE_IPS = ["8.8.8.8", "208.67.222.222"];
 const MAX_RESPONSE_BYTES = 1024 * 1024;
 const MODES = { caller: "Caller IP", specified: "Specified IP" };
 const COLUMNS = ["Provider", MODES.caller, MODES.specified, "Notes"];

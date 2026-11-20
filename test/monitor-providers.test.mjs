@@ -117,7 +117,7 @@ test("prints an aligned terminal table and keeps Markdown for redirected output"
 
 test("selects one probe IP for the whole run and records it in the report", async () => {
   const { monitorProviders } = await loadMonitor();
-  for (const [random, expected] of [[0, "8.8.8.8"], [0.25, "1.1.1.1"], [0.5, "9.9.9.9"], [0.75, "208.67.222.222"]]) {
+  for (const [random, expected] of [[0, "8.8.8.8"], [0.25, "8.8.8.8"], [0.5, "208.67.222.222"], [0.75, "208.67.222.222"]]) {
     const targets = [];
     let selections = 0;
     const report = await monitorProviders({}, async input => {
