@@ -8,7 +8,7 @@ import { ProviderRateLimitError } from "../src/providers/shared.js";
 
 const PROBE_TARGETS = [
   "8.8.8.8", "208.67.222.222",
-  "google.com", "cloudflare.com", "apple.com", "microsoft.com", "amazon.com", "facebook.com",
+  "google.com", "github.com", "apple.com", "microsoft.com", "amazon.com", "facebook.com",
 ];
 const MAX_RESPONSE_BYTES = 1024 * 1024;
 const MODES = { caller: "Caller IP", specified: "Specified IP" };

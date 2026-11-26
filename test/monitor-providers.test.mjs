@@ -117,7 +117,7 @@ test("prints an aligned terminal table and keeps Markdown for redirected output"
 
 test("shuffles a fresh probe list for each run and uses one IP for all providers", async () => {
   const { monitorProviders } = await loadMonitor();
-  const probes = ["8.8.8.8", "208.67.222.222", "google.com", "cloudflare.com", "apple.com", "microsoft.com", "amazon.com", "facebook.com"];
+  const probes = ["8.8.8.8", "208.67.222.222", "google.com", "github.com", "apple.com", "microsoft.com", "amazon.com", "facebook.com"];
   for (const [index, selected] of probes.entries()) {
     const expected = index < 2 ? selected : "192.0.2.10";
     const targets = [];
@@ -188,7 +188,7 @@ test("uses the next literal IP when all preceding domains fail to resolve", asyn
       resolutions.push(domain);
       throw new Error("DNS lookup failed");
     });
-  assert.deepEqual(resolutions, ["facebook.com", "amazon.com", "microsoft.com", "cloudflare.com", "apple.com", "google.com"]);
+  assert.deepEqual(resolutions, ["facebook.com", "amazon.com", "microsoft.com", "github.com", "apple.com", "google.com"]);
   assert.equal(report.probeTarget, "208.67.222.222");
   assert.equal(report.probeIp, "208.67.222.222");
 });
